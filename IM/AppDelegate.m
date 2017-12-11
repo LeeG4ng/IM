@@ -7,6 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import "MessageController.h"
+#import "NewsController.h"
+#import "MeController.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +19,19 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    [self.window makeKeyAndVisible];
+    
+    UITabBarController *tabCtrl = [[UITabBarController alloc] init];
+    self.window.rootViewController = tabCtrl;
+    
+    MessageController *msgCtrl = [[MessageController alloc] init];
+    UINavigationController *naviCtrl = [[UINavigationController alloc] initWithRootViewController:msgCtrl];
+    NewsController *newsCtrl = [[NewsController alloc] init];
+    MeController *meCtrl = [[MeController alloc] init];
+    
+    tabCtrl.viewControllers = @[naviCtrl, newsCtrl, meCtrl];
+    
     return YES;
 }
 

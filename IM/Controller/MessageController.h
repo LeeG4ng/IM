@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  MessageController.h
 //  IM
 //
 //  Created by Gary Lee on 2017/12/11.
@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
-
+@interface MessageController : UIViewController
 
 @end
-
