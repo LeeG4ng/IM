@@ -7,6 +7,8 @@
 //
 
 #import "MessageController.h"
+#import "DataBaseTool.h"
+#import "User.h"
 
 @interface MessageController ()
 
@@ -18,7 +20,10 @@
     [super viewDidLoad];
     self.tabBarItem.title = @"消息";
     
-    
+    DataBaseTool *tool = [DataBaseTool sharedDBTool];
+    User *me = [[User alloc] init];
+    me.userName = @"LG";
+    [tool addUser:me];
 }
 
 - (void)didReceiveMemoryWarning {

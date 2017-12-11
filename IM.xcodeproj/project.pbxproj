@@ -15,6 +15,10 @@
 		E2504FA31FDE2F08007B1441 /* MessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FA21FDE2F08007B1441 /* MessageController.m */; };
 		E2504FA61FDE2F14007B1441 /* NewsController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FA51FDE2F14007B1441 /* NewsController.m */; };
 		E2504FA91FDE2F1F007B1441 /* MeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FA81FDE2F1F007B1441 /* MeController.m */; };
+		E2504FAC1FDE99CC007B1441 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FAB1FDE99CC007B1441 /* User.m */; };
+		E2504FAF1FDE99D6007B1441 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FAE1FDE99D6007B1441 /* Friend.m */; };
+		E2504FB21FDE99E5007B1441 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FB11FDE99E5007B1441 /* Message.m */; };
+		E2504FB61FDEAF4D007B1441 /* DataBaseTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +38,14 @@
 		E2504FA51FDE2F14007B1441 /* NewsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewsController.m; sourceTree = "<group>"; };
 		E2504FA71FDE2F1F007B1441 /* MeController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeController.h; sourceTree = "<group>"; };
 		E2504FA81FDE2F1F007B1441 /* MeController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MeController.m; sourceTree = "<group>"; };
+		E2504FAA1FDE99CC007B1441 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		E2504FAB1FDE99CC007B1441 /* User.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		E2504FAD1FDE99D6007B1441 /* Friend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
+		E2504FAE1FDE99D6007B1441 /* Friend.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Friend.m; sourceTree = "<group>"; };
+		E2504FB01FDE99E5007B1441 /* Message.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		E2504FB11FDE99E5007B1441 /* Message.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		E2504FB41FDEAF4D007B1441 /* DataBaseTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataBaseTool.h; sourceTree = "<group>"; };
+		E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataBaseTool.m; sourceTree = "<group>"; };
 		F8B27538789BD45B34D4ECDC /* libPods-IM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IM.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -79,6 +91,7 @@
 		E2504F841FDE23C9007B1441 /* IM */ = {
 			isa = PBXGroup;
 			children = (
+				E2504FB31FDEAF2F007B1441 /* Tool */,
 				E2504F9D1FDE27D5007B1441 /* Model */,
 				E2504F9C1FDE27CE007B1441 /* Controller */,
 				E2504F9B1FDE27C6007B1441 /* View */,
@@ -116,8 +129,23 @@
 		E2504F9D1FDE27D5007B1441 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				E2504FAA1FDE99CC007B1441 /* User.h */,
+				E2504FAB1FDE99CC007B1441 /* User.m */,
+				E2504FAD1FDE99D6007B1441 /* Friend.h */,
+				E2504FAE1FDE99D6007B1441 /* Friend.m */,
+				E2504FB01FDE99E5007B1441 /* Message.h */,
+				E2504FB11FDE99E5007B1441 /* Message.m */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		E2504FB31FDEAF2F007B1441 /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				E2504FB41FDEAF4D007B1441 /* DataBaseTool.h */,
+				E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */,
+			);
+			path = Tool;
 			sourceTree = "<group>";
 		};
 		E66D8D7BE5865190196BD84C /* Frameworks */ = {
@@ -253,7 +281,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2504FA61FDE2F14007B1441 /* NewsController.m in Sources */,
+				E2504FB21FDE99E5007B1441 /* Message.m in Sources */,
+				E2504FAF1FDE99D6007B1441 /* Friend.m in Sources */,
 				E2504FA91FDE2F1F007B1441 /* MeController.m in Sources */,
+				E2504FB61FDEAF4D007B1441 /* DataBaseTool.m in Sources */,
+				E2504FAC1FDE99CC007B1441 /* User.m in Sources */,
 				E2504F951FDE23C9007B1441 /* main.m in Sources */,
 				E2504F871FDE23C9007B1441 /* AppDelegate.m in Sources */,
 				E2504FA31FDE2F08007B1441 /* MessageController.m in Sources */,
