@@ -12,6 +12,7 @@ typedef NS_ENUM(NSInteger, MsgDirection) {MsgReceive, MsgPost};
 
 @interface Message : NSObject
 
+@property (nonatomic, strong) NSString *friendName;
 @property (nonatomic, strong) NSString *content;
 @property (nonatomic, assign) MsgDirection direction;
 @property (nonatomic, strong) NSDate *time;

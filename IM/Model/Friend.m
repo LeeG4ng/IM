@@ -10,4 +10,11 @@
 
 @implementation Friend
 
+- (NSMutableArray *)msgs {
+    if (!_msgs) {
+        _msgs = [NSMutableArray array];
+    }
+    return _msgs;
+}
+
 @end

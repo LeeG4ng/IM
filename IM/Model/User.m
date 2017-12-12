@@ -10,4 +10,11 @@
 
 @implementation User
 
+- (NSMutableArray *)friends {
+    if (!_friends) {
+        _friends = [NSMutableArray array];
+    }
+    return _friends;
+}
+
 @end

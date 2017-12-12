@@ -28,6 +28,7 @@
     
     MessageController *msgCtrl = [[MessageController alloc] init];
     UINavigationController *naviCtrl = [[UINavigationController alloc] initWithRootViewController:msgCtrl];
+    naviCtrl.tabBarItem.title = @"消息";
     NewsController *newsCtrl = [[NewsController alloc] init];
     MeController *meCtrl = [[MeController alloc] init];
     
