@@ -14,6 +14,14 @@
 
 @implementation MeController
 
+- (instancetype)init {
+    if(self = [super init]) {
+        self.tabBarItem.title = @"我";
+        self.tabBarItem.image = [UIImage imageNamed:@"me"];
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.

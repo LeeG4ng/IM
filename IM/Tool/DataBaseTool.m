@@ -40,7 +40,7 @@ static DataBaseTool *tool;
 - (FMDatabaseQueue *)queue {
     if(!_queue) {
         NSString *doc = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES) lastObject];
-        NSString *path = [doc stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", self.user.userName]];
+        NSString *path = [doc stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", self.operatedUser.userName]];
         NSLog(@"path    %@", path);
         _queue = [FMDatabaseQueue databaseQueueWithPath:path];
     }
@@ -144,4 +144,30 @@ static DataBaseTool *tool;
     return user;
 }
 
+#pragma mark - Delete Data
+- (BOOL)deleteFriendAndMessages:(Friend *)friend {
+    __block BOOL res;
+    [self.queue inTransaction:^(FMDatabase *db, BOOL *rollback){
+        res = [db executeUpdate:@"delete from 'friends' where userName = ?", friend.userName];
+        res = res && [db executeUpdate:@"delete from 'messages' where friendName = ?", friend.userName];
+    }];
+    return res;
+}
+
+#pragma mark - Update Data
+- (BOOL)updateUserInfo:(User *)user {
+    __block BOOL res;
+    [self.queue inDatabase:^(FMDatabase *db){
+        res = [db executeUpdate:@"update 'info' set passWord=?, avatar=?", user.passWord, UIImagePNGRepresentation(user.avatar)];
+    }];
+    return res;
+}
+
+- (BOOL)updateFriendInfo:(Friend *)friend {
+    __block BOOL res;
+    [self.queue inDatabase:^(FMDatabase *db){
+        res = [db executeUpdate:@"update 'info' set avatar=? where userName=?", UIImagePNGRepresentation(friend.avatar), friend.userName];
+    }];
+    return res;
+}
 @end

@@ -10,11 +10,15 @@
     },
     {
       "idiom" : "universal",
+      "filename" : "我.png",
       "scale" : "3x"
     }
   ],
   "info" : {
     "version" : 1,
     "author" : "xcode"
+  },
+  "properties" : {
+    "template-rendering-intent" : "original"
   }
 }

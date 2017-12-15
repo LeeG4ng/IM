@@ -15,7 +15,7 @@
 @interface DataBaseTool : NSObject
 
 //使用前需设定操作的User
-@property (nonatomic, strong) User *user;
+@property (nonatomic, strong) User *operatedUser;
 
 + (instancetype)sharedDBTool;
 
@@ -26,6 +26,13 @@
 - (BOOL)recordMessage:(Message *)msg ofFriend:(Friend *)friend;//记录好友的该条消息
 
 //获取数据
-- (User *)getUserWithUserName:(NSString *)userName;//由userName获取User实例,userName不存在返回nil
+- (User *)getUserWithUserName:(NSString *)userName;//由userName获取用户实例,userName不存在返回nil
+
+//删除数据
+- (BOOL)deleteFriendAndMessages:(Friend *)friend;//删除好友及与该好友的聊天记录
+
+//更新数据
+- (BOOL)updateUserInfo:(User *)user;//更新用户数据：头像、密码
+- (BOOL)updateFriendInfo:(Friend *)friend;//更新好友数据：头像
 
 @end

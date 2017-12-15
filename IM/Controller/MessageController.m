@@ -11,8 +11,10 @@
 #import "User.h"
 #import "Friend.h"
 #import "Message.h"
+#import "LineCell.h"
+#import "FriendCell.h"
 
-@interface MessageController ()
+@interface MessageController () <UITableViewDelegate, UITableViewDataSource>
 
 @end
 
@@ -20,9 +22,19 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    self.navigationItem.title = @"消息";
+    UINavigationBar *bar = self.navigationController.navigationBar;
+    bar.barTintColor = [UIColor whiteColor];
+    [bar setShadowImage:[[UIImage alloc] init]];
     
-    [self testDataBaseWithoutNetwork];
+    UITableView *friendTable = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
+    friendTable.delegate = self;
+    friendTable.dataSource = self;
+    friendTable.separatorStyle = UITableViewCellSeparatorStyleNone;
+    friendTable.backgroundColor = CATSKILL_WHITE;
+    [self.view addSubview:friendTable];
+    
+//    [self testDataBaseWithoutNetwork];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -36,7 +48,7 @@
     me.userName = @"LG";
     me.passWord = @"123";
     me.avatar = [UIImage imageNamed:@"news"];
-    tool.user = me;
+    tool.operatedUser = me;
     Friend *friend = [[Friend alloc] init];
     friend.userName = @"xx";
     friend.avatar = [UIImage imageNamed:@"news"];
@@ -58,6 +70,48 @@
         Message *m = f.msgs.firstObject;
         NSLog(@"%@", m.time);
     });
+    me.passWord = @"updated";
+    friend.avatar = [UIImage imageNamed:@"msg"];
+    dispatch_async(queue, ^{
+        [tool updateUserInfo:me];
+        [tool updateFriendInfo:friend];
+    });
+}
+
+#pragma mark - Data Source
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if(indexPath.row % 2 == 0) {
+        static NSString * friendCellID = @"friendCellID";
+        FriendCell *friendCell = [tableView dequeueReusableCellWithIdentifier:friendCellID];
+        if(!friendCell) {
+            friendCell = [[FriendCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:friendCellID];
+        }
+        [self configDataOfCell:friendCell withIndex:indexPath.row/2];
+        return friendCell;
+    } else {
+        static NSString * lineCellID = @"lineCellID";
+        LineCell *line = [tableView dequeueReusableCellWithIdentifier:lineCellID];
+        if(!line) {
+            line = [[LineCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:lineCellID];
+        }
+        return line;
+    }
+}
+
+- (FriendCell *)configDataOfCell:(FriendCell *)cell withIndex:(NSInteger)index {
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if(indexPath.row % 2 == 0) {
+        return 68;
+    } else {
+        return 0.5;
+    }
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 2*10;
 }
 
 @end

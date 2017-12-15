@@ -19,6 +19,11 @@
 		E2504FAF1FDE99D6007B1441 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FAE1FDE99D6007B1441 /* Friend.m */; };
 		E2504FB21FDE99E5007B1441 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FB11FDE99E5007B1441 /* Message.m */; };
 		E2504FB61FDEAF4D007B1441 /* DataBaseTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */; };
+		E2A5B8261FE0CEEF00BB4E03 /* FriendCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8251FE0CEEF00BB4E03 /* FriendCell.m */; };
+		E2A5B82A1FE0E37900BB4E03 /* LineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8291FE0E37900BB4E03 /* LineCell.m */; };
+		E2A5B82D1FE1FB4900BB4E03 /* LoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B82C1FE1FB4900BB4E03 /* LoginController.m */; };
+		E2A5B8311FE2340900BB4E03 /* PagingView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8301FE2340900BB4E03 /* PagingView.m */; };
+		E2A5B8341FE2341400BB4E03 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8331FE2341400BB4E03 /* LoadingView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +51,16 @@
 		E2504FB11FDE99E5007B1441 /* Message.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		E2504FB41FDEAF4D007B1441 /* DataBaseTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataBaseTool.h; sourceTree = "<group>"; };
 		E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataBaseTool.m; sourceTree = "<group>"; };
+		E2A5B8241FE0CEEF00BB4E03 /* FriendCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FriendCell.h; sourceTree = "<group>"; };
+		E2A5B8251FE0CEEF00BB4E03 /* FriendCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriendCell.m; sourceTree = "<group>"; };
+		E2A5B8281FE0E37900BB4E03 /* LineCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LineCell.h; sourceTree = "<group>"; };
+		E2A5B8291FE0E37900BB4E03 /* LineCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LineCell.m; sourceTree = "<group>"; };
+		E2A5B82B1FE1FB4900BB4E03 /* LoginController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginController.h; sourceTree = "<group>"; };
+		E2A5B82C1FE1FB4900BB4E03 /* LoginController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginController.m; sourceTree = "<group>"; };
+		E2A5B82F1FE2340900BB4E03 /* PagingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PagingView.h; sourceTree = "<group>"; };
+		E2A5B8301FE2340900BB4E03 /* PagingView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PagingView.m; sourceTree = "<group>"; };
+		E2A5B8321FE2341400BB4E03 /* LoadingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
+		E2A5B8331FE2341400BB4E03 /* LoadingView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
 		F8B27538789BD45B34D4ECDC /* libPods-IM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IM.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -109,6 +124,8 @@
 		E2504F9B1FDE27C6007B1441 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E2A5B82E1FE2335E00BB4E03 /* Login */,
+				E2A5B8271FE0E35900BB4E03 /* Cell */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -116,6 +133,8 @@
 		E2504F9C1FDE27CE007B1441 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				E2A5B82B1FE1FB4900BB4E03 /* LoginController.h */,
+				E2A5B82C1FE1FB4900BB4E03 /* LoginController.m */,
 				E2504FA11FDE2F08007B1441 /* MessageController.h */,
 				E2504FA21FDE2F08007B1441 /* MessageController.m */,
 				E2504FA41FDE2F14007B1441 /* NewsController.h */,
@@ -146,6 +165,28 @@
 				E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */,
 			);
 			path = Tool;
+			sourceTree = "<group>";
+		};
+		E2A5B8271FE0E35900BB4E03 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				E2A5B8241FE0CEEF00BB4E03 /* FriendCell.h */,
+				E2A5B8251FE0CEEF00BB4E03 /* FriendCell.m */,
+				E2A5B8281FE0E37900BB4E03 /* LineCell.h */,
+				E2A5B8291FE0E37900BB4E03 /* LineCell.m */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		E2A5B82E1FE2335E00BB4E03 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				E2A5B82F1FE2340900BB4E03 /* PagingView.h */,
+				E2A5B8301FE2340900BB4E03 /* PagingView.m */,
+				E2A5B8321FE2341400BB4E03 /* LoadingView.h */,
+				E2A5B8331FE2341400BB4E03 /* LoadingView.m */,
+			);
+			path = Login;
 			sourceTree = "<group>";
 		};
 		E66D8D7BE5865190196BD84C /* Frameworks */ = {
@@ -285,8 +326,13 @@
 				E2504FAF1FDE99D6007B1441 /* Friend.m in Sources */,
 				E2504FA91FDE2F1F007B1441 /* MeController.m in Sources */,
 				E2504FB61FDEAF4D007B1441 /* DataBaseTool.m in Sources */,
+				E2A5B8311FE2340900BB4E03 /* PagingView.m in Sources */,
+				E2A5B82D1FE1FB4900BB4E03 /* LoginController.m in Sources */,
 				E2504FAC1FDE99CC007B1441 /* User.m in Sources */,
 				E2504F951FDE23C9007B1441 /* main.m in Sources */,
+				E2A5B8341FE2341400BB4E03 /* LoadingView.m in Sources */,
+				E2A5B8261FE0CEEF00BB4E03 /* FriendCell.m in Sources */,
+				E2A5B82A1FE0E37900BB4E03 /* LineCell.m in Sources */,
 				E2504F871FDE23C9007B1441 /* AppDelegate.m in Sources */,
 				E2504FA31FDE2F08007B1441 /* MessageController.m in Sources */,
 			);

@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "LoginController.h"
 #import "MessageController.h"
 #import "NewsController.h"
 #import "MeController.h"
@@ -23,12 +24,17 @@
     [self.window makeKeyAndVisible];
     self.window.backgroundColor = [UIColor whiteColor];
     
+    LoginController *loginCtrl = [[LoginController alloc] init];
+    self.window.rootViewController = loginCtrl;
+    
     UITabBarController *tabCtrl = [[UITabBarController alloc] init];
-    self.window.rootViewController = tabCtrl;
+//    self.window.rootViewController = tabCtrl;
     
     MessageController *msgCtrl = [[MessageController alloc] init];
     UINavigationController *naviCtrl = [[UINavigationController alloc] initWithRootViewController:msgCtrl];
     naviCtrl.tabBarItem.title = @"消息";
+    naviCtrl.tabBarItem.image = [UIImage imageNamed:@"msg"];
+    naviCtrl.tabBarItem.selectedImage = [UIImage imageNamed:@"msg_slct"];
     NewsController *newsCtrl = [[NewsController alloc] init];
     MeController *meCtrl = [[MeController alloc] init];
     
