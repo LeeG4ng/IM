@@ -10,4 +10,7 @@
 
 @interface LoadingView : UIView
 
+@property (nonatomic, strong) UIImageView *avatar;
+@property (nonatomic, strong) UILabel *userName;
+
 @end

@@ -29,14 +29,25 @@ static DataBaseTool *tool;
     return tool;
 }
 
+#pragma mark - Get Queue
+//获得记录最近用户的队列
+- (FMDatabaseQueue *)getRecentUserQueue {
+    NSString *doc = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES) lastObject];
+    NSString *path = [doc stringByAppendingPathComponent:[NSString stringWithFormat:@"recent.sqlite"]];
+    NSLog(@"recent user db ----path    %@", path);
+    FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:path];
+    return queue;
+}
+
 //以UserName获取一个数据库队列
 - (FMDatabaseQueue *)getQueueWithUserName:(NSString *)name {
     NSString *doc = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES) lastObject];
     NSString *path = [doc stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", name]];
-    NSLog(@"path    %@", path);
+    NSLog(@"user db ----path    %@", path);
     FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:path];
     return queue;
 }
+
 - (FMDatabaseQueue *)queue {
     if(!_queue) {
         NSString *doc = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES) lastObject];
@@ -48,12 +59,23 @@ static DataBaseTool *tool;
 }
 
 #pragma mark - Record Data
+- (BOOL)recordRecentUser:(User *)user {
+    FMDatabaseQueue *queue = [self getRecentUserQueue];
+    __block BOOL res;
+    [queue inDatabase:^(FMDatabase *db){
+        res = [db executeUpdate:@"CREATE TABLE IF NOT EXISIT recentUser (userName TEXT);"]
+        && [db executeUpdate:@"delete from table 'recentUser'"]
+        && [db executeUpdate:@"insert into 'recentUser' ('userName') values(?)", user.userName];
+    }];
+    return res;
+}
+
 - (BOOL)recordUser:(User *)user {
     __block BOOL res1, res2, res3;
     [self.queue inDatabase:^(FMDatabase *db) {
         res1 = [db executeUpdate:@"CREATE TABLE IF NOT EXISTS info (userName TEXT, passWord TEXT, avatar BLOB);"] && [db executeUpdate:@"insert into 'info' ('userName', 'passWord', 'avatar') values(?,?,?)", user.userName, user.passWord, UIImagePNGRepresentation(user.avatar)];
         res2 = [db executeUpdate:@"CREATE TABLE IF NOT EXISTS friends (userName TEXT, avatar BLOB);"];
-        res3 = [db executeUpdate:@"CREATE TABLE IF NOT EXISTS messages (friendName TEXT, content TEXT, direction INTEGER, time DATETIME);"];
+        res3 = [db executeUpdate:@"CREATE TABLE IF NOT EXISTS messages (friendName TEXT, content TEXT, picture BLOB, direction INTEGER, type INTEGER, time DATETIME);"];
     }];
     return res1&&res2&&res3;
 }
@@ -68,12 +90,12 @@ static DataBaseTool *tool;
     return res;
 }
 
-- (BOOL)recordMessagesWithFriend:(Friend *)friend {
+- (BOOL)recordAllMessagesWithFriend:(Friend *)friend {
     __block BOOL res;
     [self.queue inDatabase:^(FMDatabase *db) {
         BOOL tempRes;
         for(Message *msg in friend.msgs) {
-            tempRes = [db executeUpdate:@"insert into 'messages' ('friendName', 'content', 'direction', 'time') values(?,?,?,?)", friend.userName, msg.content, @(msg.direction), @(msg.time.timeIntervalSince1970)];
+            tempRes = [db executeUpdate:@"insert into 'messages' ('friendName', 'content', 'picture','direction', 'type', 'time') values(?,?,?,?,?,?)", friend.userName, msg.content, UIImagePNGRepresentation(msg.picture), @(msg.direction), @(msg.type), @(msg.time.timeIntervalSince1970)];
             res = res && tempRes;
         }
     }];
@@ -84,13 +106,26 @@ static DataBaseTool *tool;
     __block BOOL res;
     [self.queue inDatabase:^(FMDatabase *db) {
         BOOL tempRes;
-        tempRes = [db executeUpdate:@"insert into 'messages' ('friendName', 'content', 'direction', 'time') values(?,?,?,?)", friend.userName, msg.content, @(msg.direction) , @(msg.time.timeIntervalSince1970)];
+        tempRes = [db executeUpdate:@"insert into 'messages' ('friendName', 'content', 'picture', 'direction', 'type', 'time') values(?,?,?,?,?,?)", friend.userName, msg.content, UIImagePNGRepresentation(msg.picture), @(msg.direction), @(msg.type), @(msg.time.timeIntervalSince1970)];
             res = res && tempRes;
     }];
     return res;
 }
 
 #pragma mark - Fetch Data
+- (User *)getRecentUser {
+    User *user = [[User alloc] init];
+    __block FMResultSet *userSet;
+    [[self getRecentUserQueue] inDatabase:^(FMDatabase *db){
+        userSet = [db executeQuery:@"select * from 'recentUser'"];
+        while([userSet next]) {
+            user.userName = [userSet stringForColumn:@"userName"];
+        }
+    }];
+    user = [self getUserWithUserName:user.userName];
+    return user;
+}
+
 - (User *)getUserWithUserName:(NSString *)userName {
     User *user = [[User alloc] init];
     __block FMResultSet *userSet;
@@ -122,6 +157,12 @@ static DataBaseTool *tool;
         Message *msg = [[Message alloc] init];
         msg.friendName = [msgSet stringForColumn:@"friendName"];
         msg.content = [msgSet stringForColumn:@"content"];
+        msg.picture = [UIImage imageWithData:[msgSet dataForColumn:@"picture"]];
+        if([msgSet intForColumn:@"type"]) {
+            msg.type = MsgPicture;
+        } else {
+            msg.type = MsgText;
+        }
         if([msgSet intForColumn:@"direction"]) {
             msg.direction = MsgPost;
         } else {

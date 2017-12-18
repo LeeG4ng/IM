@@ -7,6 +7,7 @@
 //
 
 #import "MessageController.h"
+#import "LoginController.h"
 #import "DataBaseTool.h"
 #import "User.h"
 #import "Friend.h"
@@ -15,6 +16,8 @@
 #import "FriendCell.h"
 
 @interface MessageController () <UITableViewDelegate, UITableViewDataSource>
+
+@property (nonatomic, strong) User *user;
 
 @end
 
@@ -35,11 +38,12 @@
     [self.view addSubview:friendTable];
     
 //    [self testDataBaseWithoutNetwork];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
+    if(![self initRecentUser]) {
+        LoginController *loginCtrl = [[LoginController alloc] init];
+        [self presentViewController:loginCtrl animated:YES completion:nil];
+    }
+    
 }
 
 - (void)testDataBaseWithoutNetwork {
@@ -60,9 +64,10 @@
     [friend.msgs addObject:msg];
     dispatch_queue_t queue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
     dispatch_async(queue, ^{
-        [tool recordUser:me];
-        [tool recordFriend:friend];
-        [tool recordMessagesWithFriend:friend];
+//        [tool recordRecentUser:me];
+//        [tool recordUser:me];
+//        [tool recordFriend:friend];
+//        [tool recordMessagesWithFriend:friend];
     });
     dispatch_barrier_async(queue, ^{
         User *new = [tool getUserWithUserName:@"LG"];
@@ -73,12 +78,25 @@
     me.passWord = @"updated";
     friend.avatar = [UIImage imageNamed:@"msg"];
     dispatch_async(queue, ^{
-        [tool updateUserInfo:me];
-        [tool updateFriendInfo:friend];
+//        [tool updateUserInfo:me];
+//        [tool updateFriendInfo:friend];
     });
 }
 
-#pragma mark - Data Source
+#pragma mark - Configure Data
+- (BOOL)initRecentUser {
+    self.user = [User currentUser];
+    DataBaseTool *tool = [DataBaseTool sharedDBTool];
+    self.user = [tool getRecentUser];
+    if(self.user) {
+        NSLog(@"Loaded recent user.");
+        return YES;
+    }
+    NSLog(@"No recent user.");
+    return NO;//没有最近登陆用户记录时返回NO
+}
+
+#pragma mark - Table View Data Source
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if(indexPath.row % 2 == 0) {
         static NSString * friendCellID = @"friendCellID";

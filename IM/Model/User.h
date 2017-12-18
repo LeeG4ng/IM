@@ -16,4 +16,5 @@
 @property (nonatomic, strong) UIImage *avatar;
 @property (nonatomic, strong) NSMutableArray *friends;
 
++ (instancetype)currentUser;//获得最近登陆过用户的单例
 @end

@@ -20,12 +20,14 @@
 + (instancetype)sharedDBTool;
 
 //记录数据
+- (BOOL)recordRecentUser:(User *)user;//记录最近登陆的用户
 - (BOOL)recordUser:(User *)user;//记录用户数据
 - (BOOL)recordFriend:(Friend *)friend;//记录好友数据
-- (BOOL)recordMessagesWithFriend:(Friend *)friend;//记录与该好友的全部消息
+- (BOOL)recordAllMessagesWithFriend:(Friend *)friend;//记录与该好友的全部消息
 - (BOOL)recordMessage:(Message *)msg ofFriend:(Friend *)friend;//记录好友的该条消息
 
 //获取数据
+- (User *)getRecentUser;//获得最近登陆的用户
 - (User *)getUserWithUserName:(NSString *)userName;//由userName获取用户实例,userName不存在返回nil
 
 //删除数据

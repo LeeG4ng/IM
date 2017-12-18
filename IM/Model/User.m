@@ -8,7 +8,16 @@
 
 #import "User.h"
 
+static User *user;
 @implementation User
+
++ (instancetype)currentUser {
+    static dispatch_once_t user_oncetoken;
+    dispatch_once(&user_oncetoken, ^{
+        user = [[User alloc] init];
+    });
+    return user;
+}
 
 - (NSMutableArray *)friends {
     if (!_friends) {

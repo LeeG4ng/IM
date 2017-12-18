@@ -24,11 +24,9 @@
     [self.window makeKeyAndVisible];
     self.window.backgroundColor = [UIColor whiteColor];
     
-    LoginController *loginCtrl = [[LoginController alloc] init];
-    self.window.rootViewController = loginCtrl;
-    
+
     UITabBarController *tabCtrl = [[UITabBarController alloc] init];
-//    self.window.rootViewController = tabCtrl;
+    self.window.rootViewController = tabCtrl;
     
     MessageController *msgCtrl = [[MessageController alloc] init];
     UINavigationController *naviCtrl = [[UINavigationController alloc] initWithRootViewController:msgCtrl];
