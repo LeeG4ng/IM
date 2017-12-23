@@ -19,6 +19,13 @@ static User *user;
     return user;
 }
 
+- (void)setCurrentUserWithUser:(User *)currentUser {
+    self.userName = currentUser.userName;
+    self.passWord = currentUser.passWord;
+    self.avatar = currentUser.avatar;
+    self.friends = currentUser.friends;
+}
+
 - (NSMutableArray *)friends {
     if (!_friends) {
         _friends = [NSMutableArray array];

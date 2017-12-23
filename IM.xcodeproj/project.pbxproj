@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		41B2B08A1AAAC694F6DFD350 /* libPods-IM.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8B27538789BD45B34D4ECDC /* libPods-IM.a */; };
+		E20D31111FECE16000F76364 /* NetworkTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E20D31101FECE16000F76364 /* NetworkTool.m */; };
 		E2504F871FDE23C9007B1441 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504F861FDE23C9007B1441 /* AppDelegate.m */; };
 		E2504F921FDE23C9007B1441 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2504F901FDE23C9007B1441 /* LaunchScreen.storyboard */; };
 		E2504F951FDE23C9007B1441 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504F941FDE23C9007B1441 /* main.m */; };
@@ -26,11 +27,19 @@
 		E2A5B8341FE2341400BB4E03 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8331FE2341400BB4E03 /* LoadingView.m */; };
 		E2D679081FE6A9BB00B40D76 /* TextField.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D679071FE6A9BB00B40D76 /* TextField.m */; };
 		E2D6790F1FE6B6CC00B40D76 /* UIResponder+FirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D6790E1FE6B6CC00B40D76 /* UIResponder+FirstResponder.m */; };
+		E2D679181FE8DF7900B40D76 /* ChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D679171FE8DF7900B40D76 /* ChatController.m */; };
+		E2D6791C1FE93E2800B40D76 /* InputView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D6791B1FE93E2800B40D76 /* InputView.m */; };
+		E2D679201FEA02DD00B40D76 /* PostCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D6791F1FEA02DD00B40D76 /* PostCell.m */; };
+		E2D679231FEA02E800B40D76 /* ReceiveCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D679221FEA02E800B40D76 /* ReceiveCell.m */; };
+		E2D679261FEA02F800B40D76 /* TimeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D679251FEA02F800B40D76 /* TimeCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0FE5337D4A7DAE6B0024D3B7 /* Pods-IM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IM.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IM/Pods-IM.debug.xcconfig"; sourceTree = "<group>"; };
 		DFA2709852064DEB9906B843 /* Pods-IM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IM.release.xcconfig"; path = "Pods/Target Support Files/Pods-IM/Pods-IM.release.xcconfig"; sourceTree = "<group>"; };
+		E20D310F1FECE16000F76364 /* NetworkTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTool.h; sourceTree = "<group>"; };
+		E20D31101FECE16000F76364 /* NetworkTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkTool.m; sourceTree = "<group>"; };
+		E20D31121FED48A700F76364 /* IM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IM.entitlements; sourceTree = "<group>"; };
 		E2504F821FDE23C9007B1441 /* IM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2504F851FDE23C9007B1441 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E2504F861FDE23C9007B1441 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -67,6 +76,16 @@
 		E2D679071FE6A9BB00B40D76 /* TextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextField.m; sourceTree = "<group>"; };
 		E2D6790D1FE6B6CC00B40D76 /* UIResponder+FirstResponder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIResponder+FirstResponder.h"; sourceTree = "<group>"; };
 		E2D6790E1FE6B6CC00B40D76 /* UIResponder+FirstResponder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+FirstResponder.m"; sourceTree = "<group>"; };
+		E2D679161FE8DF7900B40D76 /* ChatController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChatController.h; sourceTree = "<group>"; };
+		E2D679171FE8DF7900B40D76 /* ChatController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatController.m; sourceTree = "<group>"; };
+		E2D6791A1FE93E2800B40D76 /* InputView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputView.h; sourceTree = "<group>"; };
+		E2D6791B1FE93E2800B40D76 /* InputView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InputView.m; sourceTree = "<group>"; };
+		E2D6791E1FEA02DD00B40D76 /* PostCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PostCell.h; sourceTree = "<group>"; };
+		E2D6791F1FEA02DD00B40D76 /* PostCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PostCell.m; sourceTree = "<group>"; };
+		E2D679211FEA02E800B40D76 /* ReceiveCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReceiveCell.h; sourceTree = "<group>"; };
+		E2D679221FEA02E800B40D76 /* ReceiveCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReceiveCell.m; sourceTree = "<group>"; };
+		E2D679241FEA02F800B40D76 /* TimeCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeCell.h; sourceTree = "<group>"; };
+		E2D679251FEA02F800B40D76 /* TimeCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TimeCell.m; sourceTree = "<group>"; };
 		F8B27538789BD45B34D4ECDC /* libPods-IM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IM.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -112,6 +131,7 @@
 		E2504F841FDE23C9007B1441 /* IM */ = {
 			isa = PBXGroup;
 			children = (
+				E20D31121FED48A700F76364 /* IM.entitlements */,
 				E2504FB31FDEAF2F007B1441 /* Tool */,
 				E2504F9D1FDE27D5007B1441 /* Model */,
 				E2504F9C1FDE27CE007B1441 /* Controller */,
@@ -129,7 +149,8 @@
 			isa = PBXGroup;
 			children = (
 				E2A5B82E1FE2335E00BB4E03 /* Login */,
-				E2A5B8271FE0E35900BB4E03 /* Cell */,
+				E2A5B8271FE0E35900BB4E03 /* FriendTableCell */,
+				E2D679191FE93E0400B40D76 /* Chat */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -141,6 +162,8 @@
 				E2A5B82C1FE1FB4900BB4E03 /* LoginController.m */,
 				E2504FA11FDE2F08007B1441 /* MessageController.h */,
 				E2504FA21FDE2F08007B1441 /* MessageController.m */,
+				E2D679161FE8DF7900B40D76 /* ChatController.h */,
+				E2D679171FE8DF7900B40D76 /* ChatController.m */,
 				E2504FA41FDE2F14007B1441 /* NewsController.h */,
 				E2504FA51FDE2F14007B1441 /* NewsController.m */,
 				E2504FA71FDE2F1F007B1441 /* MeController.h */,
@@ -167,11 +190,13 @@
 			children = (
 				E2504FB41FDEAF4D007B1441 /* DataBaseTool.h */,
 				E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */,
+				E20D310F1FECE16000F76364 /* NetworkTool.h */,
+				E20D31101FECE16000F76364 /* NetworkTool.m */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
 		};
-		E2A5B8271FE0E35900BB4E03 /* Cell */ = {
+		E2A5B8271FE0E35900BB4E03 /* FriendTableCell */ = {
 			isa = PBXGroup;
 			children = (
 				E2A5B8241FE0CEEF00BB4E03 /* FriendCell.h */,
@@ -179,7 +204,7 @@
 				E2A5B8281FE0E37900BB4E03 /* LineCell.h */,
 				E2A5B8291FE0E37900BB4E03 /* LineCell.m */,
 			);
-			path = Cell;
+			path = FriendTableCell;
 			sourceTree = "<group>";
 		};
 		E2A5B82E1FE2335E00BB4E03 /* Login */ = {
@@ -205,6 +230,29 @@
 				E2D6790E1FE6B6CC00B40D76 /* UIResponder+FirstResponder.m */,
 			);
 			path = "Support File";
+			sourceTree = "<group>";
+		};
+		E2D679191FE93E0400B40D76 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				E2D6791D1FEA02B600B40D76 /* Cell */,
+				E2D6791A1FE93E2800B40D76 /* InputView.h */,
+				E2D6791B1FE93E2800B40D76 /* InputView.m */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		E2D6791D1FEA02B600B40D76 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				E2D6791E1FEA02DD00B40D76 /* PostCell.h */,
+				E2D6791F1FEA02DD00B40D76 /* PostCell.m */,
+				E2D679211FEA02E800B40D76 /* ReceiveCell.h */,
+				E2D679221FEA02E800B40D76 /* ReceiveCell.m */,
+				E2D679241FEA02F800B40D76 /* TimeCell.h */,
+				E2D679251FEA02F800B40D76 /* TimeCell.m */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		E66D8D7BE5865190196BD84C /* Frameworks */ = {
@@ -250,6 +298,11 @@
 					E2504F811FDE23C9007B1441 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -342,9 +395,12 @@
 				E2504FA61FDE2F14007B1441 /* NewsController.m in Sources */,
 				E2504FB21FDE99E5007B1441 /* Message.m in Sources */,
 				E2504FAF1FDE99D6007B1441 /* Friend.m in Sources */,
+				E2D6791C1FE93E2800B40D76 /* InputView.m in Sources */,
+				E2D679181FE8DF7900B40D76 /* ChatController.m in Sources */,
 				E2504FA91FDE2F1F007B1441 /* MeController.m in Sources */,
 				E2504FB61FDEAF4D007B1441 /* DataBaseTool.m in Sources */,
 				E2A5B8311FE2340900BB4E03 /* PagingView.m in Sources */,
+				E2D679261FEA02F800B40D76 /* TimeCell.m in Sources */,
 				E2A5B82D1FE1FB4900BB4E03 /* LoginController.m in Sources */,
 				E2D679081FE6A9BB00B40D76 /* TextField.m in Sources */,
 				E2504FAC1FDE99CC007B1441 /* User.m in Sources */,
@@ -352,9 +408,12 @@
 				E2A5B8341FE2341400BB4E03 /* LoadingView.m in Sources */,
 				E2A5B8261FE0CEEF00BB4E03 /* FriendCell.m in Sources */,
 				E2D6790F1FE6B6CC00B40D76 /* UIResponder+FirstResponder.m in Sources */,
+				E2D679231FEA02E800B40D76 /* ReceiveCell.m in Sources */,
 				E2A5B82A1FE0E37900BB4E03 /* LineCell.m in Sources */,
+				E20D31111FECE16000F76364 /* NetworkTool.m in Sources */,
 				E2504F871FDE23C9007B1441 /* AppDelegate.m in Sources */,
 				E2504FA31FDE2F08007B1441 /* MessageController.m in Sources */,
+				E2D679201FEA02DD00B40D76 /* PostCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -481,6 +540,7 @@
 			baseConfigurationReference = 0FE5337D4A7DAE6B0024D3B7 /* Pods-IM.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = IM/IM.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2K757B683S;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -499,6 +559,7 @@
 			baseConfigurationReference = DFA2709852064DEB9906B843 /* Pods-IM.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = IM/IM.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2K757B683S;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

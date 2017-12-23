@@ -148,7 +148,7 @@ static DataBaseTool *tool;
     while ([friendSet next]) {
         Friend *friend = [[Friend alloc] init];
         friend.userName = [friendSet stringForColumn:@"userName"];
-        friend.avatar = [UIImage imageWithData:[userSet dataForColumn:@"avatar"]];
+        friend.avatar = [UIImage imageWithData:[friendSet dataForColumn:@"avatar"]];
         [user.friends addObject:friend];
     }
     //获得message数据
@@ -181,7 +181,6 @@ static DataBaseTool *tool;
     [userSet close];
     [friendSet close];
     [msgSet close];
-    user.userName = userName;
     return user;
 }
 

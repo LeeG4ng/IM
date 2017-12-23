@@ -19,4 +19,6 @@
 #define STAR_DUST [UIColor colorWithRed:0.63 green:0.63 blue:0.63 alpha:1.00]
 #define DARK_GRAY [UIColor colorWithRed:0.69 green:0.69 blue:0.69 alpha:1.00]
 
+#define BUBBLE_MAX_WIDTH SCREEN_WIDTH - 140 - 48
+
 #endif /* PrefixHeader_pch */

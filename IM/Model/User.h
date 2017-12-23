@@ -16,5 +16,10 @@
 @property (nonatomic, strong) UIImage *avatar;
 @property (nonatomic, strong) NSMutableArray *friends;
 
+//单例属性
+@property (nonatomic, strong) NSString *jwt;
+@property (nonatomic, strong) NSString *response;
+
 + (instancetype)currentUser;//获得最近登陆过用户的单例
+- (void)setCurrentUserWithUser:(User *)currentUser;//由单例User调用，将参数的属性设置到单例
 @end
