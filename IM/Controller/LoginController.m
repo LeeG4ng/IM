@@ -15,7 +15,7 @@
 #import "SocketRocket.h"
 #import "AFNetworking.h"
 
-@interface LoginController () <ClickBtn, SRWebSocketDelegate>
+@interface LoginController () <ClickBtn>
 
 @property (nonatomic, strong) UIImageView *bottomView;
 @property (nonatomic, strong) SRWebSocket *ws;
@@ -126,7 +126,7 @@
     
     //登录操作
     if(btn.tag == 1000) {
-        /*
+        
         User *tempUser = [dbTool getUserWithUserName:self.pagingView.login_userName.text];
         if(tempUser == nil) {//用户名不存在
             UIAlertController *loginUserNameAlert = [UIAlertController alertControllerWithTitle:@"用户不存在" message:nil preferredStyle:UIAlertControllerStyleAlert];
@@ -141,11 +141,13 @@
             UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:nil];
             [loginPassWordAlert addAction:okAction];
             [self presentViewController:loginPassWordAlert animated:YES completion:nil];
-        }*/
+        }
+        /*
         User *tempuser = [[User alloc] init];
         tempuser.userName = self.pagingView.login_userName.text;
         tempuser.passWord = self.pagingView.login_passWord.text;
         [netTool loginWithUser:tempuser];
+         */
     }
     
     //注册操作

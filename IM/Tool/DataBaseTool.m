@@ -8,6 +8,7 @@
 
 #import "DataBaseTool.h"
 #import "FMDB.h"
+#import "NetworkTool.h"
 #import "User.h"
 #import "Friend.h"
 #import "Message.h"
@@ -210,4 +211,6 @@ static DataBaseTool *tool;
     }];
     return res;
 }
+
+#pragma mark - Update Database From Netsever
 @end

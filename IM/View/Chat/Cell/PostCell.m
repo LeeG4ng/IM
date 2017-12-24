@@ -43,16 +43,18 @@
     if(_type == MsgText) {
         [_textLable mas_remakeConstraints:^(MASConstraintMaker *make){
             make.width.mas_lessThanOrEqualTo(@(BUBBLE_MAX_WIDTH));
-//            make.height.equalTo(_textLable);
-            make.top.left.bottom.and.right.equalTo(_bubbleView).with.insets(UIEdgeInsetsMake(0, 26, 0, 26));
+            make.edges.equalTo(_bubbleView).with.insets(UIEdgeInsetsMake(20, 26, 22, 26));
         }];
+        [_pictureView mas_remakeConstraints:^(MASConstraintMaker *make){}];
     }
     if(_type == MsgPicture) {
         [_pictureView mas_remakeConstraints:^(MASConstraintMaker *make){
             make.width.mas_lessThanOrEqualTo(@(BUBBLE_MAX_WIDTH));
-//            make.height.equalTo(_pictureView.mas_width).with.multipliedBy(_pictureView.image.size.height/_pictureView.image.size.height);
-            make.top.left.bottom.and.right.equalTo(_bubbleView).with.insets(UIEdgeInsetsMake(20, 26, 22, 26));
+            make.height.equalTo(_pictureView.mas_width).with.multipliedBy(_pictureView.image.size.height/_pictureView.image.size.width);
+            make.edges.equalTo(_bubbleView).with.insets(UIEdgeInsetsMake(20, 26, 22, 26));
+            
         }];
+        [_textLable mas_remakeConstraints:^(MASConstraintMaker *make){}];
     }
     
     [_avatarView mas_remakeConstraints:^(MASConstraintMaker *make){

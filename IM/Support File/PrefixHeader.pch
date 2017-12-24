@@ -21,4 +21,8 @@
 
 #define BUBBLE_MAX_WIDTH SCREEN_WIDTH - 140 - 48
 
+#define NAVI_HEIGHT 64
+#define BUBBLE_ORIGIN CGRectMake(SCREEN_WIDTH-15, NAVI_HEIGHT, 0, 0)
+#define SUBVIEW_ORIGIN CGRectMake(self.frame.size.width, 0, 0, 0)
+
 #endif /* PrefixHeader_pch */

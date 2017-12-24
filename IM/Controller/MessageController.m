@@ -10,16 +10,23 @@
 #import "LoginController.h"
 #import "ChatController.h"
 #import "DataBaseTool.h"
+#import "NetworkTool.h"
 #import "User.h"
 #import "Friend.h"
 #import "Message.h"
+#import "NaviView.h"
 #import "LineCell.h"
 #import "FriendCell.h"
-#import "SocketRocket.h"
+#import "Masonry.h"
+#import "BubbleView.h"
+#import "UIResponder+FirstResponder.h"
 
-@interface MessageController () <UITableViewDelegate, UITableViewDataSource, ConfigureAfterLogin>
+@interface MessageController () <UITableViewDelegate, UITableViewDataSource, ConfigureAfterLogin, UITextFieldDelegate>
 @property (nonatomic, strong) User *user;
 @property (nonatomic, strong) UITableView *friendTable;
+
+@property (nonatomic, strong) UIView *shadow;
+@property (nonatomic, strong) BubbleView *bubbleView;
 
 @end
 
@@ -36,19 +43,26 @@
     loginCtrl.delegate = self;
 
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observeRequestResponse:) name:@"RequestResponse" object:nil];
     
-    self.navigationItem.title = @"消息";
-    UINavigationBar *bar = self.navigationController.navigationBar;
-    bar.barTintColor = [UIColor whiteColor];
-    [bar setShadowImage:[[UIImage alloc] init]];
-    
-    UITableView *friendTable = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
+    UITableView *friendTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NAVI_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-NAVI_HEIGHT) style:UITableViewStylePlain];
     self.friendTable = friendTable;
     friendTable.delegate = self;
     friendTable.dataSource = self;
     friendTable.separatorStyle = UITableViewCellSeparatorStyleNone;
     friendTable.backgroundColor = CATSKILL_WHITE;
     [self.view addSubview:friendTable];
+    
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    NaviView *naviView = [[NaviView alloc] init];
+    [self.view addSubview:naviView];
+    [naviView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.left.and.width.equalTo(self.view);
+        make.height.mas_equalTo(@(NAVI_HEIGHT));
+    }];
+    naviView.holder = NaviHolderTable;
+    [naviView layout];
+    [naviView.rightBtn addTarget:self action:@selector(didClickRightButton) forControlEvents:UIControlEventTouchUpInside];
     
 //    [self testDataBaseWithoutNetwork];
     if([self initRecentUser]) {
@@ -59,8 +73,97 @@
         loginCtrl.loadingView.hidden = YES;
     }
     
+    _shadow = [[UIView alloc] initWithFrame:self.view.frame];
+    _shadow.backgroundColor = [UIColor colorWithRed:0.80 green:0.80 blue:0.80 alpha:1.00];
+    _shadow.alpha = 0;
+    [self.view addSubview:_shadow];
+    [_shadow addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didClickShadow)]];
     
+    _bubbleView = [[BubbleView alloc] initWithFrame:BUBBLE_ORIGIN];
+    [self.view addSubview:_bubbleView];
+    [_bubbleView.addBtn addTarget:self action:@selector(turnToSearchState) forControlEvents:UIControlEventTouchUpInside];
+    [_bubbleView.changeBtn addTarget:self action:@selector(turnToChangeState) forControlEvents:UIControlEventTouchUpInside];
+    _bubbleView.searchBar.delegate = self;
+    _bubbleView.searchBar.returnKeyType = UIReturnKeySearch;
+}
+
+#pragma mark - Bubble
+- (void)didClickRightButton {
     
+    [UIView animateWithDuration:0.3f animations:^{
+        _shadow.alpha = 0.15f;
+        _bubbleView.frame = CGRectMake(SCREEN_WIDTH-15-140, NAVI_HEIGHT, 140, 90);
+        [_bubbleView turnOn];
+    } completion:^(BOOL complete){
+        
+    }];
+    
+}
+
+- (void)didClickShadow {
+    NSLog(@"click shadow");
+//    _shadow.hidden = YES;
+    [UIView animateWithDuration:0.3f animations:^{
+        _shadow.alpha = 0;
+        _bubbleView.frame = BUBBLE_ORIGIN;
+        [_bubbleView turnToCloseState];
+    }];
+}
+
+- (void)turnToChangeState {
+    [UIView animateWithDuration:0.3f animations:^{
+        _bubbleView.frame = CGRectMake(15, NAVI_HEIGHT, SCREEN_WIDTH-30, 260);
+        [_bubbleView turnToChangeState];
+    } completion:^(BOOL complete){
+    }];
+}
+
+- (void)turnToSearchState {
+    [UIView animateWithDuration:0.3f animations:^{
+        _bubbleView.frame = CGRectMake(15, NAVI_HEIGHT, SCREEN_WIDTH-30, 95);
+        [_bubbleView turnToSearchState];
+    } completion:^(BOOL complete){
+        
+    }];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    id responder = [UIResponder currentFirstResponder];
+    if([responder isKindOfClass:[UITextField class]] || [responder isKindOfClass:[UITextView class]]) {
+        UIView *view = responder;
+        [view resignFirstResponder];
+    }
+    [[NetworkTool sharedNetTool] sendFriendRequestWithName:_bubbleView.searchBar.text];
+    return YES;
+}
+
+- (void)turnToRequestState {
+    [UIView animateWithDuration:0.3f animations:^{
+        _bubbleView.frame = CGRectMake(15, NAVI_HEIGHT, SCREEN_WIDTH-30, 210);
+        [_bubbleView turnToRequestState];
+    } completion:^(BOOL complete){
+    }];
+}
+
+- (void)observeRequestResponse:(NSNotification *)notification {
+    if([notification.object isEqualToString:@"发送成功"]) {
+        UIAlertController *requestAlert = [UIAlertController alertControllerWithTitle:notification.object message:nil preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:nil];
+        [requestAlert addAction:okAction];
+//        [self presentViewController:requestAlert animated:YES completion:nil];
+    }
+    if([notification.object isEqualToString:@"receive_request"]) {
+        UIAlertController *requestAlert = [UIAlertController alertControllerWithTitle:@"好友申请" message:notification.userInfo[@"username"] preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"添加" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action){
+            [[NetworkTool sharedNetTool] disposeFriendRequest:YES ID:notification.userInfo[@"id"]];
+        }];
+        UIAlertAction *noAction = [UIAlertAction actionWithTitle:@"拒绝" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action){
+            [[NetworkTool sharedNetTool] disposeFriendRequest:NO ID:notification.userInfo[@"id"]];
+        }];
+        [requestAlert addAction:okAction];
+        [requestAlert addAction:noAction];
+        [self presentViewController:requestAlert animated:YES completion:nil];
+    }
 }
 
 - (void)testDataBaseWithoutNetwork {

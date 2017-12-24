@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		41B2B08A1AAAC694F6DFD350 /* libPods-IM.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8B27538789BD45B34D4ECDC /* libPods-IM.a */; };
 		E20D31111FECE16000F76364 /* NetworkTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E20D31101FECE16000F76364 /* NetworkTool.m */; };
+		E20D31161FEE3F8300F76364 /* NaviView.m in Sources */ = {isa = PBXBuildFile; fileRef = E20D31151FEE3F8300F76364 /* NaviView.m */; };
 		E2504F871FDE23C9007B1441 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504F861FDE23C9007B1441 /* AppDelegate.m */; };
 		E2504F921FDE23C9007B1441 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2504F901FDE23C9007B1441 /* LaunchScreen.storyboard */; };
 		E2504F951FDE23C9007B1441 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504F941FDE23C9007B1441 /* main.m */; };
@@ -20,6 +21,8 @@
 		E2504FAF1FDE99D6007B1441 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FAE1FDE99D6007B1441 /* Friend.m */; };
 		E2504FB21FDE99E5007B1441 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FB11FDE99E5007B1441 /* Message.m */; };
 		E2504FB61FDEAF4D007B1441 /* DataBaseTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */; };
+		E296D3B81FEEAC2900FFB1AC /* BubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = E296D3B71FEEAC2900FFB1AC /* BubbleView.m */; };
+		E296D3BB1FEEAD8000FFB1AC /* RequestView.m in Sources */ = {isa = PBXBuildFile; fileRef = E296D3BA1FEEAD8000FFB1AC /* RequestView.m */; };
 		E2A5B8261FE0CEEF00BB4E03 /* FriendCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8251FE0CEEF00BB4E03 /* FriendCell.m */; };
 		E2A5B82A1FE0E37900BB4E03 /* LineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8291FE0E37900BB4E03 /* LineCell.m */; };
 		E2A5B82D1FE1FB4900BB4E03 /* LoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B82C1FE1FB4900BB4E03 /* LoginController.m */; };
@@ -40,6 +43,8 @@
 		E20D310F1FECE16000F76364 /* NetworkTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTool.h; sourceTree = "<group>"; };
 		E20D31101FECE16000F76364 /* NetworkTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkTool.m; sourceTree = "<group>"; };
 		E20D31121FED48A700F76364 /* IM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IM.entitlements; sourceTree = "<group>"; };
+		E20D31141FEE3F8300F76364 /* NaviView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NaviView.h; sourceTree = "<group>"; };
+		E20D31151FEE3F8300F76364 /* NaviView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NaviView.m; sourceTree = "<group>"; };
 		E2504F821FDE23C9007B1441 /* IM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2504F851FDE23C9007B1441 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E2504F861FDE23C9007B1441 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -62,6 +67,10 @@
 		E2504FB11FDE99E5007B1441 /* Message.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		E2504FB41FDEAF4D007B1441 /* DataBaseTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataBaseTool.h; sourceTree = "<group>"; };
 		E2504FB51FDEAF4D007B1441 /* DataBaseTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataBaseTool.m; sourceTree = "<group>"; };
+		E296D3B61FEEAC2900FFB1AC /* BubbleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BubbleView.h; sourceTree = "<group>"; };
+		E296D3B71FEEAC2900FFB1AC /* BubbleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BubbleView.m; sourceTree = "<group>"; };
+		E296D3B91FEEAD8000FFB1AC /* RequestView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestView.h; sourceTree = "<group>"; };
+		E296D3BA1FEEAD8000FFB1AC /* RequestView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestView.m; sourceTree = "<group>"; };
 		E2A5B8241FE0CEEF00BB4E03 /* FriendCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FriendCell.h; sourceTree = "<group>"; };
 		E2A5B8251FE0CEEF00BB4E03 /* FriendCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriendCell.m; sourceTree = "<group>"; };
 		E2A5B8281FE0E37900BB4E03 /* LineCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LineCell.h; sourceTree = "<group>"; };
@@ -110,6 +119,20 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		E20D31131FEE3F3C00F76364 /* Table */ = {
+			isa = PBXGroup;
+			children = (
+				E2A5B8271FE0E35900BB4E03 /* FriendTableCell */,
+				E20D31141FEE3F8300F76364 /* NaviView.h */,
+				E20D31151FEE3F8300F76364 /* NaviView.m */,
+				E296D3B61FEEAC2900FFB1AC /* BubbleView.h */,
+				E296D3B71FEEAC2900FFB1AC /* BubbleView.m */,
+				E296D3B91FEEAD8000FFB1AC /* RequestView.h */,
+				E296D3BA1FEEAD8000FFB1AC /* RequestView.m */,
+			);
+			path = Table;
+			sourceTree = "<group>";
+		};
 		E2504F791FDE23C9007B1441 = {
 			isa = PBXGroup;
 			children = (
@@ -149,7 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				E2A5B82E1FE2335E00BB4E03 /* Login */,
-				E2A5B8271FE0E35900BB4E03 /* FriendTableCell */,
+				E20D31131FEE3F3C00F76364 /* Table */,
 				E2D679191FE93E0400B40D76 /* Chat */,
 			);
 			path = View;
@@ -393,6 +416,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2504FA61FDE2F14007B1441 /* NewsController.m in Sources */,
+				E20D31161FEE3F8300F76364 /* NaviView.m in Sources */,
 				E2504FB21FDE99E5007B1441 /* Message.m in Sources */,
 				E2504FAF1FDE99D6007B1441 /* Friend.m in Sources */,
 				E2D6791C1FE93E2800B40D76 /* InputView.m in Sources */,
@@ -407,12 +431,14 @@
 				E2504F951FDE23C9007B1441 /* main.m in Sources */,
 				E2A5B8341FE2341400BB4E03 /* LoadingView.m in Sources */,
 				E2A5B8261FE0CEEF00BB4E03 /* FriendCell.m in Sources */,
+				E296D3BB1FEEAD8000FFB1AC /* RequestView.m in Sources */,
 				E2D6790F1FE6B6CC00B40D76 /* UIResponder+FirstResponder.m in Sources */,
 				E2D679231FEA02E800B40D76 /* ReceiveCell.m in Sources */,
 				E2A5B82A1FE0E37900BB4E03 /* LineCell.m in Sources */,
 				E20D31111FECE16000F76364 /* NetworkTool.m in Sources */,
 				E2504F871FDE23C9007B1441 /* AppDelegate.m in Sources */,
 				E2504FA31FDE2F08007B1441 /* MessageController.m in Sources */,
+				E296D3B81FEEAC2900FFB1AC /* BubbleView.m in Sources */,
 				E2D679201FEA02DD00B40D76 /* PostCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

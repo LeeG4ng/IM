@@ -49,9 +49,9 @@ static NetworkTool *tool;
     [messageHandshakeManager POST:@"http://133.130.102.196:7341/message" parameters:@{@"jwt":[User currentUser].jwt} progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject){
         NSLog(@"message handshake success:%@", responseObject);
         NSURL *requestURL = [NSURL URLWithString:@"ws://133.130.102.196:7341/message"];
-        _requestWS = [[SRWebSocket alloc] initWithURL:requestURL];
-        _requestWS.delegate = self;
-        [_requestWS open];
+        _messageWS = [[SRWebSocket alloc] initWithURL:requestURL];
+        _messageWS.delegate = self;
+        [_messageWS open];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error){
         NSLog(@"message handshake error :%@", error);
     }];
@@ -100,11 +100,16 @@ static NetworkTool *tool;
     manager.requestSerializer = [[AFJSONRequestSerializer alloc] init];
     [manager.requestSerializer setValue:[User currentUser].jwt forHTTPHeaderField:@"Authorization"];
     [manager GET:friendUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject){
-        NSLog(@"%@", responseObject);
+        NSArray *arr = responseObject;
+        NSLog(@"friends:%@,,,%@", arr, responseObject);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error){
         NSDictionary *errorDict = [NSJSONSerialization JSONObjectWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] options:NSJSONReadingMutableLeaves error:nil];
         NSLog(@"%@,,,%@", error, errorDict);
     }];
+}
+
+- (void)getFriendRequestHistory {
+    
 }
 
 - (void)sendFriendRequestWithName:(NSString *)userName {
@@ -119,6 +124,24 @@ static NetworkTool *tool;
     [_requestWS send:data];
 }
 
+- (void)disposeFriendRequest:(BOOL)dispose ID:(NSString *)id {
+    if(dispose) {//同意
+        NSDictionary *dict = @{@"type":@"agree_request", @"id":id};
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+        [_requestWS send:data];
+    } else {//拒绝
+        NSDictionary *dict = @{@"type":@"reject_request",@"id":id};
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+        [_requestWS send:data];
+    }
+}
+
+#pragma mark - Message Operation
+- (void)sendMessage:(Message *)msg toFriend:(NSString *)userName {
+    NSDictionary *dict = @{@"type":@"send_message", @"to":userName, @"content":msg.content, @"create_time":@(msg.time.timeIntervalSince1970)};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+    [_messageWS send:data];
+}
 
 #pragma mark - WebSocket Delegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
@@ -126,8 +149,16 @@ static NetworkTool *tool;
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
+    NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
+    NSLog(@"%@", dict);
     if(webSocket == _requestWS) {
-        
+        if([dict[@"info"] isEqualToString:@"received"]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"RequestResponse" object:@"发送成功"];
+        }
+        if([dict[@"type"] isEqualToString:@"receive_request"]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"RequestResponse" object:@"receive_request" userInfo:dict];
+        }
     }
     if(webSocket == _messageWS) {
         
@@ -136,5 +167,11 @@ static NetworkTool *tool;
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
     NSLog(@"%@", error);
+    if(webSocket == _requestWS) {
+        
+    }
+    if(webSocket == _messageWS) {
+        
+    }
 }
 @end

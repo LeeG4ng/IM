@@ -8,6 +8,7 @@
 
 #import "ChatController.h"
 #import "UIResponder+FirstResponder.h"
+#import "NaviView.h"
 #import "InputView.h"
 #import "Masonry.h"
 #import "User.h"
@@ -29,6 +30,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
     [self layout];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -46,7 +48,6 @@
 
 - (void)layout {
     self.view.backgroundColor = CATSKILL_WHITE;
-    self.navigationItem.title = self.currentFriend.userName;
     
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)]];
     
@@ -62,10 +63,19 @@
     tableView.contentInset = UIEdgeInsetsMake(0, 0, 48, 0);
     _tableView = tableView;
     
-    [tableView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.size.equalTo(self.view);
-        make.center.equalTo(self.view);
+    tableView.frame = CGRectMake(0, NAVI_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-NAVI_HEIGHT);
+    
+    NaviView *naviView = [[NaviView alloc] init];
+    naviView.titleView.text = self.currentFriend.userName;
+    naviView.holder = NaviHolderChat;
+    [self.view addSubview:naviView];
+//    naviView.bounds = CGRectMake(0, 0, SCREEN_WIDTH, NAVI_HEIGHT);
+    [naviView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.left.and.width.equalTo(self.view);
+        make.height.mas_equalTo(@(NAVI_HEIGHT));
     }];
+    [naviView layout];
+    [naviView.leftBtn addTarget:self action:@selector(didClickLeftBtn) forControlEvents:UIControlEventTouchUpInside];
     
     InputView *inputView = [[InputView alloc] init];
     [self.view addSubview:inputView];
@@ -77,6 +87,10 @@
         make.height.equalTo(inputView.textView).with.offset(8);
     }];
     inputView.textView.delegate = self;
+}
+
+- (void)didClickLeftBtn {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (Friend *)currentFriend {

@@ -37,4 +37,7 @@
 - (BOOL)updateUserInfo:(User *)user;//更新用户数据：头像、密码
 - (BOOL)updateFriendInfo:(Friend *)friend;//更新好友数据：头像
 
+//从网络更新数据
+
+
 @end

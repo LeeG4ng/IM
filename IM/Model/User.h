@@ -18,7 +18,7 @@
 
 //单例属性
 @property (nonatomic, strong) NSString *jwt;
-@property (nonatomic, strong) NSString *response;
+@property (nonatomic, strong) NSString *response;//登录时的服务器响应
 
 + (instancetype)currentUser;//获得最近登陆过用户的单例
 - (void)setCurrentUserWithUser:(User *)currentUser;//由单例User调用，将参数的属性设置到单例
