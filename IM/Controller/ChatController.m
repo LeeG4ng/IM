@@ -17,12 +17,11 @@
 #import "ReceiveCell.h"
 #import "TimeCell.h"
 
-@interface ChatController () <UITextViewDelegate, ClickBtn, UITableViewDelegate, UITableViewDataSource>
+@interface ChatController () <UITextViewDelegate, ClickBtn, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate>
 
 @property (nonatomic, strong) Friend *currentFriend;
 @property (nonatomic, strong) InputView *inputView;
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, assign) CGFloat keyboardHeight;
 
 @end
 
@@ -81,6 +80,7 @@
     [self.view addSubview:inputView];
     _inputView = inputView;
     inputView.delegate = self;
+    inputView.textView.delegate = self;
     
     [inputView mas_makeConstraints:^(MASConstraintMaker *make){
         make.left.bottom.and.width.equalTo(self.view);
@@ -174,8 +174,9 @@
     [_inputView mas_remakeConstraints:^(MASConstraintMaker *make){
         make.left.and.width.equalTo(self.view);
         make.height.equalTo(textView).with.offset(8);
-        make.bottom.equalTo(self.view).with.offset(-self.keyboardHeight);
+        make.bottom.equalTo(self.view);
     }];
+    
 }
 
 - (void)hideKeyboard {
@@ -187,32 +188,52 @@
     }
 }
 
-- (void)keyboardWillShow:(NSNotification *)notify {
+- (void)keyboardWillShow:(NSNotification *)notification {
     NSLog(@"kb appear");
-    CGFloat keyboardHeight = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    self.keyboardHeight = keyboardHeight;
-    CGRect frame = _inputView.frame;
-    frame.origin.y -= keyboardHeight;
-    _inputView.frame = frame;
+    CGFloat keyboardHeight = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+    double duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    [UIView animateWithDuration:duration animations:^{
+        _inputView.transform = CGAffineTransformMakeTranslation(0, -keyboardHeight);
+    }];
 }
 
-- (void)keyboardWillHide:(NSNotification *)notify {
+- (void)keyboardWillHide:(NSNotification *)notification {
     NSLog(@"kb hide");
-    CGFloat keyboardHeight = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    CGRect frame = _inputView.frame;
-    frame.origin.y += keyboardHeight;
-    _inputView.frame = frame;
-    
+    double duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    [UIView animateWithDuration:duration animations:^{
+        _inputView.transform = CGAffineTransformMakeTranslation(0, 0);
+    }];
 }
 
 #pragma mark - Click Button
 - (void)didClickBtn:(UIButton *)btn {
+    [self hideKeyboard];
     if(btn.tag == 2000) {//点击图片按钮
         NSLog(@"click imgBtn");
+        [self sendPicture];
     }
     if(btn.tag == 2001) {//点击发送按钮
         NSLog(@"click sendBtn");
+        [self sendMessage];
     }
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if ([text isEqualToString:@"\n"]) {
+        [textView resignFirstResponder];
+        [self sendMessage];
+        return NO;
+    }
+    return YES;
+}
+
+#pragma mark - Message Operation
+- (void)sendMessage {
+    
+}
+
+- (void)sendPicture {
+    
 }
 
 @end

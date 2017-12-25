@@ -6,6 +6,7 @@
 //  Copyright © 2017年 UniqueStudio. All rights reserved.
 //
 
+#import "DataBaseTool.h"
 #import "NetworkTool.h"
 #import "AFNetworking.h"
 #import "SocketRocket.h"
@@ -63,6 +64,7 @@ static NetworkTool *tool;
     NSString *regUrl = @"http://133.130.102.196:7341/user/register";
     NSDictionary *regParam = @{@"username":user.userName, @"password":user.passWord};
     [manager POST:regUrl parameters:regParam progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject){
+        [[DataBaseTool sharedDBTool] recordUser:user];
         [User currentUser].jwt = responseObject[@"jwt"];
         [User currentUser].response = @"success";
         [[NSNotificationCenter defaultCenter] postNotificationName:@"UserResponse" object:[User currentUser].response];
@@ -79,8 +81,14 @@ static NetworkTool *tool;
     NSString *loginUrl = @"http://133.130.102.196:7341/user/login";
     NSDictionary *loginParam = @{@"username":user.userName, @"password":user.passWord};
     [manager POST:loginUrl parameters:loginParam progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject){
-        [User currentUser].jwt = responseObject[@"jwt"];
-        [User currentUser].response = @"success";
+        User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:user.userName];//没写头像
+        if(recordedUser) {//本地有登陆用户的数据
+            [[User currentUser] setCurrentUserWithUser:recordedUser];
+            [User currentUser].jwt = responseObject[@"jwt"];
+            [User currentUser].response = @"success";
+        } else {//本地不存在登陆用户的数据
+            [[DataBaseTool sharedDBTool] recordUser:user];
+        }
         [[NSNotificationCenter defaultCenter] postNotificationName:@"UserResponse" object:[User currentUser].response];
         [self WSHandshake];
         //delete
