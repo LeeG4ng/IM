@@ -43,7 +43,6 @@
             make.width.and.height.mas_equalTo(@50);
         }];
         _image.contentMode = UIViewContentModeScaleAspectFill;
-        _image.backgroundColor = [UIColor blueColor];
         _image.layer.cornerRadius = 25;
         _image.layer.masksToBounds = YES;
         
@@ -54,7 +53,6 @@
             make.height.mas_equalTo(@25);
         }];
         _name.font = [UIFont fontWithName:@"PingFangSC-Regular" size:18];
-        _name.backgroundColor = [UIColor yellowColor];
 
         [_msg mas_makeConstraints:^(MASConstraintMaker *make){
             make.top.equalTo(_name.mas_bottom).with.offset(2);
@@ -64,7 +62,6 @@
         }];
         _msg.font = [UIFont fontWithName:@"PingFangSC-Medium" size:12];
         _msg.tintColor = STAR_DUST;
-        _msg.backgroundColor = [UIColor purpleColor];
 
         [_time mas_makeConstraints:^(MASConstraintMaker *make){
             make.top.equalTo(self.contentView).with.offset(14);
@@ -75,7 +72,6 @@
         _time.font = [UIFont fontWithName:@"PingFangSC-Medium" size:10];
         _time.textAlignment = NSTextAlignmentRight;
         _time.tintColor = DARK_GRAY;
-        _time.backgroundColor = [UIColor greenColor];
         
         [_bubble mas_makeConstraints:^(MASConstraintMaker *make){
             make.right.equalTo(self.contentView).with.offset(-15);

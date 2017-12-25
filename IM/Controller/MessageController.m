@@ -65,13 +65,15 @@
     [naviView.rightBtn addTarget:self action:@selector(didClickRightButton) forControlEvents:UIControlEventTouchUpInside];
     
 //    [self testDataBaseWithoutNetwork];
+    /*
     if([self initRecentUser]) {
         loginCtrl.pagingView.hidden = YES;
         loginCtrl.loadingView.hidden = NO;
     } else {
         loginCtrl.pagingView.hidden = NO;
         loginCtrl.loadingView.hidden = YES;
-    }
+     }*/[self initRecentUser];
+    loginCtrl.pagingView.hidden = NO;
     
     _shadow = [[UIView alloc] initWithFrame:self.view.frame];
     _shadow.backgroundColor = [UIColor colorWithRed:0.80 green:0.80 blue:0.80 alpha:1.00];

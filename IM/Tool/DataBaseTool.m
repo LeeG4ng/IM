@@ -50,12 +50,12 @@ static DataBaseTool *tool;
 }
 
 - (FMDatabaseQueue *)queue {
-    if(!_queue) {
+//    if(!_queue) {
         NSString *doc = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES) lastObject];
         NSString *path = [doc stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", self.operatedUser.userName]];
         NSLog(@"path    %@", path);
         _queue = [FMDatabaseQueue databaseQueueWithPath:path];
-    }
+//    }
     return _queue;
 }
 

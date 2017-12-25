@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSString *passWord;
 @property (nonatomic, strong) UIImage *avatar;
 @property (nonatomic, strong) NSMutableArray *friends;
+@property (nonatomic, strong) NSArray *friendNames;
 
 //单例属性
 @property (nonatomic, strong) NSString *jwt;

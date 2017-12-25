@@ -16,6 +16,7 @@
 #import "PostCell.h"
 #import "ReceiveCell.h"
 #import "TimeCell.h"
+#import "NetworkTool.h"
 
 @interface ChatController () <UITextViewDelegate, ClickBtn, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate>
 
@@ -30,19 +31,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
-    [self layout];
+//    [self layout];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-//    if (@available(iOS 11.0, *)) {
-//        [_tableView setContentOffset:CGPointMake(0, UIEdgeInsetsInsetRect(self.tableView.frame, self.tableView.safeAreaInsets).size.height)];
-//    } else {
-//        // Fallback on earlier versions
-//    }
-//    [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentFriend.msgs.count*2 - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    _currentFriend = [User currentUser].friends[_friendIndex];
+    [self.tableView reloadData];
+    [self layout];
 }
 
 - (void)layout {
@@ -94,9 +92,7 @@
 }
 
 - (Friend *)currentFriend {
-    if(!_currentFriend) {
-        _currentFriend = [User currentUser].friends[_friendIndex];
-    }
+    _currentFriend = [User currentUser].friends[_friendIndex];
     return _currentFriend;
 }
 
@@ -122,7 +118,7 @@
             postCell = [[PostCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:postCellID];
         }
         postCell.type = currentMsg.type;
-        postCell.avatarView.image = _currentFriend.avatar;
+        postCell.avatarView.image = [User currentUser].avatar;
         postCell.textLable.text = currentMsg.content;
         postCell.pictureView.image = currentMsg.picture;
         [postCell layout];
@@ -229,7 +225,11 @@
 
 #pragma mark - Message Operation
 - (void)sendMessage {
-    
+    Message *msg = [[Message alloc] init];
+    msg.type = MsgText;
+    msg.content = _inputView.textView.text;
+    msg.time = [NSDate date];
+    [[NetworkTool sharedNetTool] sendMessage:msg toFriend:_currentFriend.userName];
 }
 
 - (void)sendPicture {

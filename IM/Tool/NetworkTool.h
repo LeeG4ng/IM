@@ -22,13 +22,13 @@
 
 //好友操作
 - (void)getFriendsList;//获取好友列表
-- (void)getFriendRequestHistory;
+- (void)getFriendRequestHistory;//获取离线时收到的好友请求
 - (void)sendFriendRequestWithName:(NSString *)userName;//发出好友请求
 - (void)deleteFriendWithName:(NSString *)userName;//删除好友
 - (void)disposeFriendRequest:(BOOL)dispose ID:(NSString *)id;//处理好友请求
 
 //消息处理
-- (void)sendMessage:(Message *)msg toFriend:(NSString *)userName;
-- (void)getMessageHistory;
+- (void)sendMessage:(Message *)msg toFriend:(NSString *)userName;//发送消息
+- (void)getMessageHistorySince:(NSTimeInterval)time;//获取从参数时间开始的历史消息
 
 @end

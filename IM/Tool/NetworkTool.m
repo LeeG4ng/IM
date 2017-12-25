@@ -64,6 +64,7 @@ static NetworkTool *tool;
     NSString *regUrl = @"http://133.130.102.196:7341/user/register";
     NSDictionary *regParam = @{@"username":user.userName, @"password":user.passWord};
     [manager POST:regUrl parameters:regParam progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject){
+        [DataBaseTool sharedDBTool].operatedUser = user;
         [[DataBaseTool sharedDBTool] recordUser:user];
         [User currentUser].jwt = responseObject[@"jwt"];
         [User currentUser].response = @"success";
@@ -81,6 +82,7 @@ static NetworkTool *tool;
     NSString *loginUrl = @"http://133.130.102.196:7341/user/login";
     NSDictionary *loginParam = @{@"username":user.userName, @"password":user.passWord};
     [manager POST:loginUrl parameters:loginParam progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject){
+        [DataBaseTool sharedDBTool].operatedUser = user;
         User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:user.userName];//没写头像
         if(recordedUser) {//本地有登陆用户的数据
             [[User currentUser] setCurrentUserWithUser:recordedUser];
@@ -91,8 +93,6 @@ static NetworkTool *tool;
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:@"UserResponse" object:[User currentUser].response];
         [self WSHandshake];
-        //delete
-        [self getFriendsList];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error){
         NSLog(@"%@", error);
         NSDictionary *errorDict = [NSJSONSerialization JSONObjectWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] options:NSJSONReadingMutableLeaves error:nil];
@@ -108,8 +108,17 @@ static NetworkTool *tool;
     manager.requestSerializer = [[AFJSONRequestSerializer alloc] init];
     [manager.requestSerializer setValue:[User currentUser].jwt forHTTPHeaderField:@"Authorization"];
     [manager GET:friendUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject){
-        NSArray *arr = responseObject;
-        NSLog(@"friends:%@,,,%@", arr, responseObject);
+        NSArray *friendsArr = responseObject;
+        NSLog(@"friends:%@", friendsArr);
+        for(NSDictionary *friend in friendsArr) {
+            if(![[User currentUser].friendNames containsObject:friend[@"username"]]) {
+                Friend *tempFriend = [[Friend alloc] init];
+                tempFriend.userName = friend[@"username"];//没写头像
+                [[DataBaseTool sharedDBTool] recordFriend:tempFriend];
+            }
+        }
+        User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
+        [[User currentUser] setCurrentUserWithUser:recordedUser];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error){
         NSDictionary *errorDict = [NSJSONSerialization JSONObjectWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] options:NSJSONReadingMutableLeaves error:nil];
         NSLog(@"%@,,,%@", error, errorDict);
@@ -117,7 +126,9 @@ static NetworkTool *tool;
 }
 
 - (void)getFriendRequestHistory {
-    
+    NSDictionary *dict = @{@"type":@"history"};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+    [_requestWS send:data];
 }
 
 - (void)sendFriendRequestWithName:(NSString *)userName {
@@ -151,30 +162,91 @@ static NetworkTool *tool;
     [_messageWS send:data];
 }
 
+- (void)getMessageHistorySince:(NSTimeInterval)time {
+    NSDictionary *dict = @{@"type":@"history", @"start_time":@(time), @"end_time":@([NSDate date].timeIntervalSince1970)};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+    [_messageWS send:data];
+}
+
 #pragma mark - WebSocket Delegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    NSLog(@"open");
+    if(webSocket == _requestWS) {
+        NSLog(@"requestWS:open");
+        [self getFriendsList];//好友列表http
+        [self getFriendRequestHistory];//好友请求历史
+    }
+    if(webSocket == _messageWS) {
+        NSLog(@"messageWS:open");
+        //聊天记录
+        NSTimeInterval time = 0;
+        User *currentUser = [User currentUser];
+        for(Friend *friend in currentUser.friends) {
+            Message *msg = friend.msgs.lastObject;
+            NSTimeInterval tempTime = msg.time.timeIntervalSince1970;
+            if(tempTime > time) {
+                time = tempTime;
+            }
+        }
+        [self getMessageHistorySince:time];
+        
+    }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message {
     NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-    NSLog(@"%@", dict);
+    NSLog(@"all ws receive:%@", dict);
+    NSString *type = dict[@"type"];
     if(webSocket == _requestWS) {
-        if([dict[@"info"] isEqualToString:@"received"]) {
+        if([type isEqualToString:@"send_request"]) {//发送好友请求成功
             [[NSNotificationCenter defaultCenter] postNotificationName:@"RequestResponse" object:@"发送成功"];
         }
-        if([dict[@"type"] isEqualToString:@"receive_request"]) {
+        if([type isEqualToString:@"receive_request"]) {//收到好友请求
             [[NSNotificationCenter defaultCenter] postNotificationName:@"RequestResponse" object:@"receive_request" userInfo:dict];
+        }
+        if([type isEqualToString:@"history"]) {//好友请求历史
+            NSArray *requestsArr = dict[@"requests"];
+            for(NSDictionary *request in requestsArr) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"RequestResponse" object:@"receive_request" userInfo:request];
+            }
+        }
+        if([type isEqualToString:@"agree_request"]) {//同意好友请求成功
+            
         }
     }
     if(webSocket == _messageWS) {
-        
+        if([type isEqualToString:@"history"]) {//聊天记录
+            NSArray *msgArr = dict[@"messages"];
+            for(NSDictionary *msg in msgArr) {
+                Message *tempMsg = [[Message alloc] init];
+                tempMsg.type = MsgText;
+                tempMsg.content = msg[@"content"];
+                NSTimeInterval time = [msg[@"create_time"] doubleValue];
+                tempMsg.time = [NSDate dateWithTimeIntervalSince1970:time];
+                NSString *friendName = @"";
+                if([msg[@"from"] isEqualToString:[User currentUser].userName]) {
+                    tempMsg.direction = MsgPost;
+                    friendName = msg[@"to"];
+                } else {
+                    tempMsg.direction = MsgReceive;
+                    friendName = msg[@"from"];
+                }
+                User *currentUser = [User currentUser];
+                for(Friend *friend in currentUser.friends) {
+                    if([friend.userName isEqualToString:friendName]) {
+                        [[DataBaseTool sharedDBTool] recordMessage:tempMsg ofFriend:friend];
+                    }
+                }
+            }
+        }
+        if([type isEqualToString:@"receive_message"]) {
+            
+        }
     }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
-    NSLog(@"%@", error);
+    NSLog(@"ws error:%@", error);
     if(webSocket == _requestWS) {
         
     }

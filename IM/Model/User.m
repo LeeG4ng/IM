@@ -7,6 +7,7 @@
 //
 
 #import "User.h"
+#import "Friend.h"
 
 static User *user;
 @implementation User
@@ -31,6 +32,14 @@ static User *user;
         _friends = [NSMutableArray array];
     }
     return _friends;
+}
+
+- (NSArray *)friendNames {
+    NSMutableArray *arr = [NSMutableArray array];
+    for(Friend *friend in _friends) {
+        [arr addObject:friend.userName];
+    }
+    return arr;
 }
 
 @end
