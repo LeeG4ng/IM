@@ -34,6 +34,7 @@
 //    [self layout];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getReloadNotification:) name:@"ReloadMessage" object:nil];
     
 }
 
@@ -98,8 +99,8 @@
 
 #pragma mark - TableView DataSource
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger msgIndex = _currentFriend.msgs.count-1-indexPath.row/2;
-    Message *currentMsg = _currentFriend.msgs[msgIndex];
+    NSInteger msgIndex = self.currentFriend.msgs.count-1-indexPath.row/2;
+    Message *currentMsg = self.currentFriend.msgs[msgIndex];
     if(indexPath.row%2 == 0) {//TimeCell
         static NSString *timeCellID = @"timeCellID";
         TimeCell *timeCell = [tableView dequeueReusableCellWithIdentifier:timeCellID];
@@ -107,7 +108,7 @@
             timeCell = [[TimeCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:timeCellID];
         }
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        dateFormatter.dateFormat = @"yy年MM月d日 H:m:s";
+        dateFormatter.dateFormat = @"yy年MM月d日 H:m:ss";
         timeCell.timeLable.text = [dateFormatter stringFromDate:currentMsg.time];
         [timeCell layout];
         return timeCell;
@@ -130,7 +131,7 @@
             receiveCell = [[ReceiveCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:receiveCellID];
         }
         receiveCell.type = currentMsg.type;
-        receiveCell.avatarView.image = _currentFriend.avatar;
+        receiveCell.avatarView.image = self.currentFriend.avatar;
         receiveCell.textLable.text = currentMsg.content;
         receiveCell.pictureView.image = currentMsg.picture;
         [receiveCell layout];
@@ -139,7 +140,11 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return _currentFriend.msgs.count*2;
+    return self.currentFriend.msgs.count*2;
+}
+
+- (void)getReloadNotification:(NSNotification *)notification {
+    [self.tableView reloadData];
 }
 
 #pragma mark - AutoResizing
@@ -177,6 +182,7 @@
 
 - (void)hideKeyboard {
     NSLog(@"tap gesture");
+    [self.tableView reloadData];
     id responder = [UIResponder currentFirstResponder];
     if([responder isKindOfClass:[UITextField class]] || [responder isKindOfClass:[UITextView class]]) {
         UIView *view = responder;
@@ -230,6 +236,7 @@
     msg.content = _inputView.textView.text;
     msg.time = [NSDate date];
     [[NetworkTool sharedNetTool] sendMessage:msg toFriend:_currentFriend.userName];
+    _inputView.textView.text = @"";
 }
 
 - (void)sendPicture {

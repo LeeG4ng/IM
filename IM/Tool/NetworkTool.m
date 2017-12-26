@@ -114,11 +114,18 @@ static NetworkTool *tool;
             if(![[User currentUser].friendNames containsObject:friend[@"username"]]) {
                 Friend *tempFriend = [[Friend alloc] init];
                 tempFriend.userName = friend[@"username"];//没写头像
-                [[DataBaseTool sharedDBTool] recordFriend:tempFriend];
+                dispatch_group_t group = dispatch_group_create();
+                dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [[DataBaseTool sharedDBTool] recordFriend:tempFriend];
+                });
+                dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+                    User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
+                    [[User currentUser] setCurrentUserWithUser:recordedUser];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadFriend" object:@"reload"];
+                });
             }
         }
-        User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
-        [[User currentUser] setCurrentUserWithUser:recordedUser];
+        
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error){
         NSDictionary *errorDict = [NSJSONSerialization JSONObjectWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] options:NSJSONReadingMutableLeaves error:nil];
         NSLog(@"%@,,,%@", error, errorDict);
@@ -181,7 +188,7 @@ static NetworkTool *tool;
         NSTimeInterval time = 0;
         User *currentUser = [User currentUser];
         for(Friend *friend in currentUser.friends) {
-            Message *msg = friend.msgs.lastObject;
+            Message *msg = friend.msgs.firstObject;
             NSTimeInterval tempTime = msg.time.timeIntervalSince1970;
             if(tempTime > time) {
                 time = tempTime;
@@ -211,7 +218,7 @@ static NetworkTool *tool;
             }
         }
         if([type isEqualToString:@"agree_request"]) {//同意好友请求成功
-            
+            [self getFriendsList];
         }
     }
     if(webSocket == _messageWS) {
@@ -234,13 +241,65 @@ static NetworkTool *tool;
                 User *currentUser = [User currentUser];
                 for(Friend *friend in currentUser.friends) {
                     if([friend.userName isEqualToString:friendName]) {
-                        [[DataBaseTool sharedDBTool] recordMessage:tempMsg ofFriend:friend];
+                        dispatch_group_t group = dispatch_group_create();
+                        dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                            [[DataBaseTool sharedDBTool] recordMessage:tempMsg ofFriend:friend];
+                        });
+                        dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+                            User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
+                            [[User currentUser] setCurrentUserWithUser:recordedUser];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadMessage" object:@"reload"];
+                        });
                     }
                 }
             }
+            User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
+            [[User currentUser] setCurrentUserWithUser:recordedUser];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadMessage" object:@"reload"];
         }
         if([type isEqualToString:@"receive_message"]) {
-            
+            Message *tempMsg = [[Message alloc] init];
+            tempMsg.type = MsgText;
+            tempMsg.content = dict[@"content"];
+            NSTimeInterval time = [dict[@"create_time"] doubleValue];
+            tempMsg.time = [NSDate dateWithTimeIntervalSince1970:time];
+            NSString *friendName = @"";
+            if([dict[@"from"] isEqualToString:[User currentUser].userName]) {
+                tempMsg.direction = MsgPost;
+                friendName = dict[@"to"];
+            } else {
+                tempMsg.direction = MsgReceive;
+                friendName = dict[@"from"];
+            }
+            User *currentUser = [User currentUser];
+            for(Friend *friend in currentUser.friends) {
+                if([friend.userName isEqualToString:friendName]) {
+                    dispatch_group_t group = dispatch_group_create();
+                    dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                        [[DataBaseTool sharedDBTool] recordMessage:tempMsg ofFriend:friend];
+                    });
+                    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+                        User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
+                        [[User currentUser] setCurrentUserWithUser:recordedUser];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadMessage" object:@"reload"];
+                    });
+                }
+            }
+        }
+        if([type isEqualToString:@"send_message"]) {
+            NSTimeInterval time = 0;
+            User *currentUser = [User currentUser];
+            for(Friend *friend in currentUser.friends) {
+                Message *msg = friend.msgs.firstObject;
+                NSTimeInterval tempTime = msg.time.timeIntervalSince1970;
+                if(tempTime > time) {
+                    time = tempTime;
+                }
+            }
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [self getMessageHistorySince:time];
+            });
+//            [self getMessageHistorySince:time];
         }
     }
 }

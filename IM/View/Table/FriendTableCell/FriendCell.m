@@ -67,7 +67,7 @@
             make.top.equalTo(self.contentView).with.offset(14);
             make.right.equalTo(self.contentView).with.offset(-15);
             make.height.mas_equalTo(@14);
-            make.width.mas_equalTo(@50);
+            make.width.mas_equalTo(@70);
         }];
         _time.font = [UIFont fontWithName:@"PingFangSC-Medium" size:10];
         _time.textAlignment = NSTextAlignmentRight;

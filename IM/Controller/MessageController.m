@@ -44,6 +44,8 @@
 
     [super viewDidLoad];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observeRequestResponse:) name:@"RequestResponse" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getReloadNotification:) name:@"ReloadMessage" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getReloadNotification:) name:@"ReloadFriend" object:nil];
     
     UITableView *friendTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NAVI_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-NAVI_HEIGHT) style:UITableViewStylePlain];
     self.friendTable = friendTable;
@@ -227,6 +229,10 @@
 //    NSLog(@"self.user = %@", friend.avatar);
 }
 
+- (void)getReloadNotification:(NSNotification *)notification {
+    [self.friendTable reloadData];
+}
+
 #pragma mark - Table View Data Source
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if(indexPath.row % 2 == 0) {
@@ -251,6 +257,11 @@
     Friend *friend = self.user.friends[index];
     cell.image.image = friend.avatar;
     cell.name.text = friend.userName;
+    Message *lastMsg = friend.msgs.firstObject;
+    cell.msg.text = lastMsg.content;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yy年M月d日";
+    cell.time.text = [dateFormatter stringFromDate:lastMsg.time];
     return cell;
 }
 
