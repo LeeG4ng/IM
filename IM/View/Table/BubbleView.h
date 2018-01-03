@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RequestView.h"
+#import "ChangeAvatarView.h"
 
 @interface BubbleView : UIImageView
 
@@ -16,6 +17,8 @@
 @property (nonatomic, strong) UIButton *confirmBtn;
 @property (nonatomic, strong) UITextField *searchBar;
 @property (nonatomic, strong) RequestView *requestView;
+@property (nonatomic, strong) UILabel *avatarLabel;
+@property (nonatomic, strong) ChangeAvatarView *avatarView;
 
 - (void)turnOn;
 - (void)turnToChangeState;

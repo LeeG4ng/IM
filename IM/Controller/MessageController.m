@@ -11,6 +11,7 @@
 #import "ChatController.h"
 #import "DataBaseTool.h"
 #import "NetworkTool.h"
+#import "AfNetworking.h"
 #import "User.h"
 #import "Friend.h"
 #import "Message.h"
@@ -21,12 +22,15 @@
 #import "BubbleView.h"
 #import "UIResponder+FirstResponder.h"
 
-@interface MessageController () <UITableViewDelegate, UITableViewDataSource, ConfigureAfterLogin, UITextFieldDelegate>
+@interface MessageController () <UITableViewDelegate, UITableViewDataSource, ConfigureAfterLogin, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, strong) User *user;
 @property (nonatomic, strong) UITableView *friendTable;
 
 @property (nonatomic, strong) UIView *shadow;
 @property (nonatomic, strong) BubbleView *bubbleView;
+@property (nonatomic, strong) NaviView *naviView;
+
+@property (nonatomic, strong) Friend *friendToDelete;
 
 @end
 
@@ -41,11 +45,36 @@
     LoginController *loginCtrl = [[LoginController alloc] init];
     [self presentViewController:loginCtrl animated:NO completion:nil];
     loginCtrl.delegate = self;
-
+    
+    self.navigationController.interactivePopGestureRecognizer.delegate = self;
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    NaviView *naviView = [[NaviView alloc] init];
+    [self.view addSubview:naviView];
+    _naviView = naviView;
+    [naviView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.left.and.width.equalTo(self.view);
+        make.height.mas_equalTo(@(NAVI_HEIGHT));
+    }];
+    naviView.holder = NaviHolderTable;
+    [naviView layout];
+    [naviView.rightBtn addTarget:self action:@selector(didClickRightButton) forControlEvents:UIControlEventTouchUpInside];
+    
+    AFNetworkReachabilityManager *reachabilityManager = [AFNetworkReachabilityManager sharedManager];
+    [reachabilityManager startMonitoring];
+    [reachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        if(status == AFNetworkReachabilityStatusNotReachable || status == AFNetworkReachabilityStatusUnknown) {
+            self.naviView.titleView.text = @"无网络连接";
+        } else {
+            self.naviView.titleView.text = @"消息";
+        }
+    }];
+    
+    
     [super viewDidLoad];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observeRequestResponse:) name:@"RequestResponse" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getReloadNotification:) name:@"ReloadMessage" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getReloadNotification:) name:@"ReloadFriend" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(observeDeleteResponse:) name:@"DeleteResponse" object:nil];
     
     UITableView *friendTable = [[UITableView alloc] initWithFrame:CGRectMake(0, NAVI_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-NAVI_HEIGHT) style:UITableViewStylePlain];
     self.friendTable = friendTable;
@@ -55,16 +84,6 @@
     friendTable.backgroundColor = CATSKILL_WHITE;
     [self.view addSubview:friendTable];
     
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
-    NaviView *naviView = [[NaviView alloc] init];
-    [self.view addSubview:naviView];
-    [naviView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.left.and.width.equalTo(self.view);
-        make.height.mas_equalTo(@(NAVI_HEIGHT));
-    }];
-    naviView.holder = NaviHolderTable;
-    [naviView layout];
-    [naviView.rightBtn addTarget:self action:@selector(didClickRightButton) forControlEvents:UIControlEventTouchUpInside];
     
 //    [self testDataBaseWithoutNetwork];
     /*
@@ -89,6 +108,8 @@
     [_bubbleView.changeBtn addTarget:self action:@selector(turnToChangeState) forControlEvents:UIControlEventTouchUpInside];
     _bubbleView.searchBar.delegate = self;
     _bubbleView.searchBar.returnKeyType = UIReturnKeySearch;
+    
+    [_bubbleView.avatarView.btn addTarget:self action:@selector(didClickAvatar) forControlEvents:UIControlEventTouchUpInside];
 }
 
 #pragma mark - Bubble
@@ -149,12 +170,28 @@
     }];
 }
 
+- (void)didClickAvatar {
+    UIImagePickerController *pickerCtr = [[UIImagePickerController alloc] init];
+    pickerCtr.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    pickerCtr.delegate = self;
+    [self presentViewController:pickerCtr animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    NSString *type = [info objectForKey:UIImagePickerControllerMediaType];
+    if ([type isEqualToString:@"public.image"]) {
+        UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+        [[NetworkTool sharedNetTool] changeAvatar:image];
+        [picker dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
 - (void)observeRequestResponse:(NSNotification *)notification {
     if([notification.object isEqualToString:@"发送成功"]) {
         UIAlertController *requestAlert = [UIAlertController alertControllerWithTitle:notification.object message:nil preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:nil];
         [requestAlert addAction:okAction];
-//        [self presentViewController:requestAlert animated:YES completion:nil];
+        [self presentViewController:requestAlert animated:YES completion:nil];
     }
     if([notification.object isEqualToString:@"receive_request"]) {
         UIAlertController *requestAlert = [UIAlertController alertControllerWithTitle:@"好友申请" message:notification.userInfo[@"username"] preferredStyle:UIAlertControllerStyleAlert];
@@ -170,43 +207,6 @@
     }
 }
 
-- (void)testDataBaseWithoutNetwork {
-    DataBaseTool *tool = [DataBaseTool sharedDBTool];
-    User *me = [[User alloc] init];
-    me.userName = @"LG";
-    me.passWord = @"123";
-    me.avatar = [UIImage imageNamed:@"news"];
-    tool.operatedUser = me;
-    Friend *friend = [[Friend alloc] init];
-    friend.userName = @"xx";
-    friend.avatar = [UIImage imageNamed:@"news"];
-    [me.friends addObject:friend];
-    Message *msg= [[Message alloc] init];
-    msg.content = @"test";
-    msg.direction = MsgPost;
-    msg.type = MsgText;
-    msg.time = [NSDate dateWithTimeIntervalSince1970:1000];
-    [friend.msgs addObject:msg];
-    dispatch_queue_t queue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
-    dispatch_async(queue, ^{
-//        [tool recordRecentUser:me];
-        [tool recordUser:me];
-        [tool recordFriend:friend];
-        [tool recordAllMessagesWithFriend:friend];
-    });
-//    dispatch_barrier_async(queue, ^{
-//        User *new = [tool getUserWithUserName:@"LG"];
-//        Friend *f = new.friends.firstObject;
-//        Message *m = f.msgs.firstObject;
-//        NSLog(@"%@", m.time);
-//    });
-//    me.passWord = @"updated";
-//    friend.avatar = [UIImage imageNamed:@"msg"];
-//    dispatch_async(queue, ^{
-//        [tool updateUserInfo:me];
-//        [tool updateFriendInfo:friend];
-//    });
-}
 
 
 
@@ -242,6 +242,11 @@
             friendCell = [[FriendCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:friendCellID];
         }
         friendCell = [self configDataOfCell:friendCell withIndex:indexPath.row/2];
+        if([friendCell.num.text isEqualToString:@"0"]) {
+            friendCell.bubble.hidden = YES;
+        } else {
+            friendCell.bubble.hidden = NO;
+        }
         return friendCell;
     } else {
         static NSString * lineCellID = @"lineCellID";
@@ -258,10 +263,15 @@
     cell.image.image = friend.avatar;
     cell.name.text = friend.userName;
     Message *lastMsg = friend.msgs.firstObject;
-    cell.msg.text = lastMsg.content;
+    if(lastMsg.type == MsgText) {
+        cell.msg.text = lastMsg.content;
+    } else {
+        cell.msg.text = @"[图片]";
+    }
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yy年M月d日";
     cell.time.text = [dateFormatter stringFromDate:lastMsg.time];
+    cell.num.text = [NSString stringWithFormat:@"%ld", friend.unread];
     return cell;
 }
 
@@ -283,6 +293,29 @@
     chatCtrl.friendIndex = indexPath.row/2;
     chatCtrl.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:chatCtrl animated:YES];
+}
+
+//左滑删除
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    // 从数据源中删除
+    self.friendToDelete = self.user.friends[indexPath.row];
+    [[NetworkTool sharedNetTool] deleteFriendWithName:self.friendToDelete.userName];
+    
+    // 从列表中删除
+//    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+- (void)observeDeleteResponse:(NSNotification *)notification {
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[DataBaseTool sharedDBTool] deleteFriendAndMessages:self.friendToDelete];
+        User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
+        [[User currentUser] setCurrentUserWithUser:recordedUser];
+    });
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        [self.friendTable reloadData];
+    });
+    
 }
 
 @end

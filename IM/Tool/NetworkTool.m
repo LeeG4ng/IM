@@ -86,11 +86,13 @@ static NetworkTool *tool;
         User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:user.userName];//没写头像
         if(recordedUser) {//本地有登陆用户的数据
             [[User currentUser] setCurrentUserWithUser:recordedUser];
-            [User currentUser].jwt = responseObject[@"jwt"];
-            [User currentUser].response = @"success";
         } else {//本地不存在登陆用户的数据
             [[DataBaseTool sharedDBTool] recordUser:user];
         }
+        [User currentUser].jwt = responseObject[@"jwt"];
+        [User currentUser].response = @"success";
+        [self getFriendsList];//好友列表http
+        [self getCurrentAvatar];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"UserResponse" object:[User currentUser].response];
         [self WSHandshake];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error){
@@ -98,6 +100,52 @@ static NetworkTool *tool;
         NSDictionary *errorDict = [NSJSONSerialization JSONObjectWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] options:NSJSONReadingMutableLeaves error:nil];
         [User currentUser].response = errorDict[@"error"];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"UserResponse" object:[User currentUser].response];
+    }];
+}
+
+- (void)getCurrentAvatar {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    NSString *avatarUrl = @"http://133.130.102.196:7341/user";
+    manager.requestSerializer = [[AFJSONRequestSerializer alloc] init];
+    [manager.requestSerializer setValue:[User currentUser].jwt forHTTPHeaderField:@"Authorization"];
+    [manager GET:avatarUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        NSLog(@"%@", responseObject);
+        NSString *appendedStr = responseObject[@"avatar"];
+        if(appendedStr) {
+            NSArray *strArr = [appendedStr componentsSeparatedByString:@"data:image/png;base64,"];
+            NSString *encodedStr = strArr[1];
+            NSData *imageData = [[NSData alloc] initWithBase64EncodedString:encodedStr options:NSDataBase64DecodingIgnoreUnknownCharacters];
+            UIImage *image = [UIImage imageWithData:imageData];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [User currentUser].avatar = image;
+                [[DataBaseTool sharedDBTool] updateUserInfo:[User currentUser]];
+            });
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"%@", error);
+    }];
+}
+
+- (void)changeAvatar:(UIImage *)avatar {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    NSString *avatarUrl = @"http://133.130.102.196:7341/user";
+    manager.requestSerializer = [[AFJSONRequestSerializer alloc] init];
+    [manager.requestSerializer setValue:[User currentUser].jwt forHTTPHeaderField:@"Authorization"];
+    NSData *picData = UIImagePNGRepresentation(avatar);
+    NSString *str = @"data:image/png;base64,";
+    NSString *encodedStr = [picData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    NSString *appendedStr = [str stringByAppendingString:encodedStr];
+    NSDictionary *avatarParam = @{@"avatar":appendedStr, @"self_password":@"", @"password":@""};
+    [manager PATCH:avatarUrl parameters:avatarParam success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        NSLog(@"avatar success:%@", responseObject);
+        //换头咯
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [User currentUser].avatar = avatar;
+            [[DataBaseTool sharedDBTool] updateUserInfo:[User currentUser]];
+        });
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSDictionary *errorDict = [NSJSONSerialization JSONObjectWithData:error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] options:NSJSONReadingMutableLeaves error:nil];
+        NSLog(@"avatar error:%@", errorDict);
     }];
 }
 
@@ -164,9 +212,20 @@ static NetworkTool *tool;
 
 #pragma mark - Message Operation
 - (void)sendMessage:(Message *)msg toFriend:(NSString *)userName {
-    NSDictionary *dict = @{@"type":@"send_message", @"to":userName, @"content":msg.content, @"create_time":@(msg.time.timeIntervalSince1970)};
-    NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
-    [_messageWS send:data];
+    if(msg.type == MsgText) {//文本
+        NSDictionary *dict = @{@"type":@"send_message", @"to":userName, @"content":msg.content, @"create_time":@(msg.time.timeIntervalSince1970)};
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+        [_messageWS send:data];
+    }
+    if(msg.type == MsgPicture) {//图片
+        NSData *picData = UIImagePNGRepresentation(msg.picture);
+        NSString *str = @"data:image/png;base64,";
+        NSString *encodedStr = [picData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+        NSString *appendedStr = [str stringByAppendingString:encodedStr];
+        NSDictionary *dict = @{@"type":@"send_message", @"to":userName, @"image":appendedStr, @"create_time":@(msg.time.timeIntervalSince1970)};
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+        [_messageWS send:data];
+    }
 }
 
 - (void)getMessageHistorySince:(NSTimeInterval)time {
@@ -179,7 +238,7 @@ static NetworkTool *tool;
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     if(webSocket == _requestWS) {
         NSLog(@"requestWS:open");
-        [self getFriendsList];//好友列表http
+        
         [self getFriendRequestHistory];//好友请求历史
     }
     if(webSocket == _messageWS) {
@@ -220,14 +279,29 @@ static NetworkTool *tool;
         if([type isEqualToString:@"agree_request"]) {//同意好友请求成功
             [self getFriendsList];
         }
+        if([type isEqualToString:@"reject_request"] && [dict[@"info"] isEqualToString:@"deleted"]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"DeleteResponse" object:@"deleted"];
+        }
     }
     if(webSocket == _messageWS) {
         if([type isEqualToString:@"history"]) {//聊天记录
             NSArray *msgArr = dict[@"messages"];
             for(NSDictionary *msg in msgArr) {
                 Message *tempMsg = [[Message alloc] init];
-                tempMsg.type = MsgText;
-                tempMsg.content = msg[@"content"];
+                NSArray *keyArr = [msg allKeys];
+                if([keyArr containsObject:@"content"]) {
+                    tempMsg.type = MsgText;
+                    tempMsg.content = msg[@"content"];
+                }
+                if([keyArr containsObject:@"image"]) {
+                    tempMsg.type = MsgPicture;
+                    NSString *appendedStr = msg[@"image"];
+                    NSArray *strArr = [appendedStr componentsSeparatedByString:@"data:image/png;base64,"];
+                    NSString *encodedStr = strArr[1];
+                    NSData *imageData = [[NSData alloc] initWithBase64EncodedString:encodedStr options:NSDataBase64DecodingIgnoreUnknownCharacters];
+                    UIImage *image = [UIImage imageWithData:imageData];
+                    tempMsg.picture = image;
+                }
                 NSTimeInterval time = [msg[@"create_time"] doubleValue];
                 tempMsg.time = [NSDate dateWithTimeIntervalSince1970:time];
                 NSString *friendName = @"";
@@ -241,9 +315,11 @@ static NetworkTool *tool;
                 User *currentUser = [User currentUser];
                 for(Friend *friend in currentUser.friends) {
                     if([friend.userName isEqualToString:friendName]) {
+                        friend.unread++;
                         dispatch_group_t group = dispatch_group_create();
                         dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                             [[DataBaseTool sharedDBTool] recordMessage:tempMsg ofFriend:friend];
+                            [[DataBaseTool sharedDBTool] updateFriendInfo:friend];
                         });
                         dispatch_group_notify(group, dispatch_get_main_queue(), ^{
                             User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
@@ -259,8 +335,20 @@ static NetworkTool *tool;
         }
         if([type isEqualToString:@"receive_message"]) {
             Message *tempMsg = [[Message alloc] init];
-            tempMsg.type = MsgText;
-            tempMsg.content = dict[@"content"];
+            NSArray *keyArr = [dict allKeys];
+            if([keyArr containsObject:@"content"]) {
+                tempMsg.type = MsgText;
+                tempMsg.content = dict[@"content"];
+            }
+            if([keyArr containsObject:@"image"]) {
+                tempMsg.type = MsgPicture;
+                NSString *appendedStr = dict[@"image"];
+                NSArray *strArr = [appendedStr componentsSeparatedByString:@"data:image/png;base64,"];
+                NSString *encodedStr = strArr[1];
+                NSData *imageData = [[NSData alloc] initWithBase64EncodedString:encodedStr options:NSDataBase64DecodingIgnoreUnknownCharacters];
+                UIImage *image = [UIImage imageWithData:imageData];
+                tempMsg.picture = image;
+            }
             NSTimeInterval time = [dict[@"create_time"] doubleValue];
             tempMsg.time = [NSDate dateWithTimeIntervalSince1970:time];
             NSString *friendName = @"";
@@ -274,9 +362,11 @@ static NetworkTool *tool;
             User *currentUser = [User currentUser];
             for(Friend *friend in currentUser.friends) {
                 if([friend.userName isEqualToString:friendName]) {
+                    friend.unread++;
                     dispatch_group_t group = dispatch_group_create();
                     dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                         [[DataBaseTool sharedDBTool] recordMessage:tempMsg ofFriend:friend];
+                        [[DataBaseTool sharedDBTool] updateFriendInfo:friend];
                     });
                     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
                         User *recordedUser = [[DataBaseTool sharedDBTool] getUserWithUserName:[User currentUser].userName];
@@ -299,7 +389,6 @@ static NetworkTool *tool;
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 [self getMessageHistorySince:time];
             });
-//            [self getMessageHistorySince:time];
         }
     }
 }
@@ -313,4 +402,9 @@ static NetworkTool *tool;
         
     }
 }
+
+- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
+    NSLog(@"code:%ld,reason:%@,wasClean:%d", code, reason, wasClean);
+}
+
 @end

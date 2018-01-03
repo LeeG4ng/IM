@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class User;
 @class Friend;
@@ -19,6 +20,8 @@
 //用户操作
 - (void)registerWithUser:(User *)user;//注册成功返回nil，失败返回错误描述
 - (void)loginWithUser:(User *)user;//注册成功返回nil，失败返回错误描述
+- (void)getCurrentAvatar;//获取用户当前头像
+- (void)changeAvatar:(UIImage *)avatar;//更换头像
 
 //好友操作
 - (void)getFriendsList;//获取好友列表

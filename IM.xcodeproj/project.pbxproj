@@ -28,6 +28,7 @@
 		E2A5B82D1FE1FB4900BB4E03 /* LoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B82C1FE1FB4900BB4E03 /* LoginController.m */; };
 		E2A5B8311FE2340900BB4E03 /* PagingView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8301FE2340900BB4E03 /* PagingView.m */; };
 		E2A5B8341FE2341400BB4E03 /* LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A5B8331FE2341400BB4E03 /* LoadingView.m */; };
+		E2C4DF2F1FF344F100D30E86 /* ChangeAvatarView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C4DF2E1FF344F100D30E86 /* ChangeAvatarView.m */; };
 		E2D679081FE6A9BB00B40D76 /* TextField.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D679071FE6A9BB00B40D76 /* TextField.m */; };
 		E2D6790F1FE6B6CC00B40D76 /* UIResponder+FirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D6790E1FE6B6CC00B40D76 /* UIResponder+FirstResponder.m */; };
 		E2D679181FE8DF7900B40D76 /* ChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D679171FE8DF7900B40D76 /* ChatController.m */; };
@@ -81,6 +82,8 @@
 		E2A5B8301FE2340900BB4E03 /* PagingView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PagingView.m; sourceTree = "<group>"; };
 		E2A5B8321FE2341400BB4E03 /* LoadingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadingView.h; sourceTree = "<group>"; };
 		E2A5B8331FE2341400BB4E03 /* LoadingView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoadingView.m; sourceTree = "<group>"; };
+		E2C4DF2D1FF344F100D30E86 /* ChangeAvatarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeAvatarView.h; sourceTree = "<group>"; };
+		E2C4DF2E1FF344F100D30E86 /* ChangeAvatarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangeAvatarView.m; sourceTree = "<group>"; };
 		E2D679061FE6A9BB00B40D76 /* TextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextField.h; sourceTree = "<group>"; };
 		E2D679071FE6A9BB00B40D76 /* TextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextField.m; sourceTree = "<group>"; };
 		E2D6790D1FE6B6CC00B40D76 /* UIResponder+FirstResponder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIResponder+FirstResponder.h"; sourceTree = "<group>"; };
@@ -127,6 +130,8 @@
 				E20D31151FEE3F8300F76364 /* NaviView.m */,
 				E296D3B61FEEAC2900FFB1AC /* BubbleView.h */,
 				E296D3B71FEEAC2900FFB1AC /* BubbleView.m */,
+				E2C4DF2D1FF344F100D30E86 /* ChangeAvatarView.h */,
+				E2C4DF2E1FF344F100D30E86 /* ChangeAvatarView.m */,
 				E296D3B91FEEAD8000FFB1AC /* RequestView.h */,
 				E296D3BA1FEEAD8000FFB1AC /* RequestView.m */,
 			);
@@ -422,6 +427,7 @@
 				E2D6791C1FE93E2800B40D76 /* InputView.m in Sources */,
 				E2D679181FE8DF7900B40D76 /* ChatController.m in Sources */,
 				E2504FA91FDE2F1F007B1441 /* MeController.m in Sources */,
+				E2C4DF2F1FF344F100D30E86 /* ChangeAvatarView.m in Sources */,
 				E2504FB61FDEAF4D007B1441 /* DataBaseTool.m in Sources */,
 				E2A5B8311FE2340900BB4E03 /* PagingView.m in Sources */,
 				E2D679261FEA02F800B40D76 /* TimeCell.m in Sources */,

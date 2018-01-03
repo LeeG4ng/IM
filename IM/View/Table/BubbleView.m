@@ -8,6 +8,7 @@
 
 #import "BubbleView.h"
 #import "Masonry.h"
+#import "User.h"
 
 @implementation BubbleView
 
@@ -20,12 +21,16 @@
         _confirmBtn = [[UIButton alloc] init];
         _searchBar = [[UITextField alloc] init];
         _requestView = [[RequestView alloc] init];
+        _avatarView = [[ChangeAvatarView alloc] init];
+        _avatarLabel = [[UILabel alloc] init];
         
         [self addSubview:_addBtn];
         [self addSubview:_changeBtn];
         [self addSubview:_confirmBtn];
         [self addSubview:_searchBar];
         [self addSubview:_requestView];
+        [self addSubview:_avatarView];
+        [self addSubview:_avatarLabel];
         
         for(UIView *subview in self.subviews) {
             subview.frame = SUBVIEW_ORIGIN;
@@ -41,6 +46,15 @@
         _searchBar.textAlignment = NSTextAlignmentCenter;
         _searchBar.textColor = [UIColor whiteColor];
         _searchBar.placeholder = @"搜索";
+        
+        _avatarView.image = [User currentUser].avatar;
+        _avatarView.layer.cornerRadius = 65;
+        _avatarView.layer.masksToBounds = YES;
+        
+        _avatarLabel.text = @"更换头像";
+        _avatarLabel.textColor = [UIColor whiteColor];
+        _avatarLabel.font = [UIFont systemFontOfSize:22];
+        _avatarLabel.textAlignment = NSTextAlignmentCenter;
     }
     return self;
 }
@@ -56,7 +70,9 @@
     [UIView animateWithDuration:0.3f animations:^{
         _addBtn.frame = SUBVIEW_ORIGIN;
         _changeBtn.frame = SUBVIEW_ORIGIN;
-        
+        _avatarView.frame = CGRectMake(107, 90, 130, 130);
+        _avatarView.btn.frame = CGRectMake(0, 0, 130, 130);
+        _avatarLabel.frame = CGRectMake(128, 27, 100, 22);
     }];
 }
 
@@ -81,6 +97,7 @@
     for(UIView *subview in self.subviews) {
         subview.frame = SUBVIEW_ORIGIN;
     }
+    _avatarView.btn.frame = SUBVIEW_ORIGIN;
 }
 
 @end

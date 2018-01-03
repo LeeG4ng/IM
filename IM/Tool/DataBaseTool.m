@@ -75,7 +75,7 @@ static DataBaseTool *tool;
     __block BOOL res1, res2, res3;
     [self.queue inDatabase:^(FMDatabase *db) {
         res1 = [db executeUpdate:@"CREATE TABLE IF NOT EXISTS info (userName TEXT, passWord TEXT, avatar BLOB);"] && [db executeUpdate:@"insert into 'info' ('userName', 'passWord', 'avatar') values(?,?,?)", user.userName, user.passWord, UIImagePNGRepresentation(user.avatar)];
-        res2 = [db executeUpdate:@"CREATE TABLE IF NOT EXISTS friends (userName TEXT, avatar BLOB);"];
+        res2 = [db executeUpdate:@"CREATE TABLE IF NOT EXISTS friends (userName TEXT, avatar BLOB, unread INTEGER);"];
         res3 = [db executeUpdate:@"CREATE TABLE IF NOT EXISTS messages (friendName TEXT, content TEXT, picture BLOB, direction INTEGER, type INTEGER, time DATETIME);"];
     }];
     return res1&&res2&&res3;
@@ -84,9 +84,10 @@ static DataBaseTool *tool;
 - (BOOL)recordFriend:(Friend *)friend {
     __block BOOL res;
     [self.queue inDatabase:^(FMDatabase *db) {
-        res = [db executeUpdate:@"insert into 'friends' ('userName', 'avatar') values(?,?)",
+        res = [db executeUpdate:@"insert into 'friends' ('userName', 'avatar', 'unread') values(?,?,?)",
                friend.userName,
-               UIImagePNGRepresentation(friend.avatar)];
+               UIImagePNGRepresentation(friend.avatar),
+               @(friend.unread)];
     }];
     return res;
 }
@@ -150,6 +151,7 @@ static DataBaseTool *tool;
         Friend *friend = [[Friend alloc] init];
         friend.userName = [friendSet stringForColumn:@"userName"];
         friend.avatar = [UIImage imageWithData:[friendSet dataForColumn:@"avatar"]];
+        friend.unread = [friendSet intForColumn:@"unread"];
         [user.friends addObject:friend];
     }
     //获得message数据
@@ -207,7 +209,7 @@ static DataBaseTool *tool;
 - (BOOL)updateFriendInfo:(Friend *)friend {
     __block BOOL res;
     [self.queue inDatabase:^(FMDatabase *db){
-        res = [db executeUpdate:@"update 'info' set avatar=? where userName=?", UIImagePNGRepresentation(friend.avatar), friend.userName];
+        res = [db executeUpdate:@"update 'friends' set avatar=?, unread=? where userName=?", UIImagePNGRepresentation(friend.avatar), @(friend.unread), friend.userName];
     }];
     return res;
 }

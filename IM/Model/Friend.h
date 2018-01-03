@@ -14,5 +14,6 @@
 @property (nonatomic, strong) NSString *userName;
 @property (nonatomic, strong) UIImage *avatar;
 @property (nonatomic, strong) NSMutableArray *msgs;
+@property (nonatomic, assign) NSInteger unread;
 
 @end

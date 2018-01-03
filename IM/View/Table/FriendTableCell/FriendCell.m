@@ -61,7 +61,7 @@
             make.right.equalTo(_bubble.mas_left).with.offset(-8);
         }];
         _msg.font = [UIFont fontWithName:@"PingFangSC-Medium" size:12];
-        _msg.tintColor = STAR_DUST;
+        _msg.textColor = STAR_DUST;
 
         [_time mas_makeConstraints:^(MASConstraintMaker *make){
             make.top.equalTo(self.contentView).with.offset(14);
@@ -71,7 +71,7 @@
         }];
         _time.font = [UIFont fontWithName:@"PingFangSC-Medium" size:10];
         _time.textAlignment = NSTextAlignmentRight;
-        _time.tintColor = DARK_GRAY;
+        _time.textColor = DARK_GRAY;
         
         [_bubble mas_makeConstraints:^(MASConstraintMaker *make){
             make.right.equalTo(self.contentView).with.offset(-15);
@@ -89,20 +89,11 @@
             make.width.mas_equalTo(@20);
         }];
         _num.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:12];
-        _num.tintColor = [UIColor whiteColor];
+        _num.textColor = [UIColor whiteColor];
         _num.textAlignment = NSTextAlignmentCenter;
-        [_num addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
     }
     return self;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if([keyPath isEqualToString:@"text"] && [object isKindOfClass:[UILabel class]]) {
-        NSString *text = change[@"new"];
-        if([text isEqualToString:@"0"]) {
-            _bubble.hidden = YES;
-        }
-    }
-}
 
 @end

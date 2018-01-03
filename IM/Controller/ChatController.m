@@ -17,8 +17,9 @@
 #import "ReceiveCell.h"
 #import "TimeCell.h"
 #import "NetworkTool.h"
+#import "DataBaseTool.h"
 
-@interface ChatController () <UITextViewDelegate, ClickBtn, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate>
+@interface ChatController () <UITextViewDelegate, ClickBtn, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
 @property (nonatomic, strong) Friend *currentFriend;
 @property (nonatomic, strong) InputView *inputView;
@@ -31,6 +32,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+
 //    [self layout];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -40,8 +42,18 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     _currentFriend = [User currentUser].friends[_friendIndex];
+    [self clearUnread];
     [self.tableView reloadData];
     [self layout];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [self clearUnread];
+}
+
+- (void)clearUnread {
+    _currentFriend.unread = 0;
+    [[DataBaseTool sharedDBTool] updateFriendInfo:_currentFriend];
 }
 
 - (void)layout {
@@ -235,12 +247,31 @@
     msg.type = MsgText;
     msg.content = _inputView.textView.text;
     msg.time = [NSDate date];
-    [[NetworkTool sharedNetTool] sendMessage:msg toFriend:_currentFriend.userName];
+    [[NetworkTool sharedNetTool] sendMessage:msg toFriend:self.currentFriend.userName];
     _inputView.textView.text = @"";
 }
 
 - (void)sendPicture {
+    UIImagePickerController *pickerCtr = [[UIImagePickerController alloc] init];
+    pickerCtr.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    pickerCtr.delegate = self;
+    [self presentViewController:pickerCtr animated:YES completion:nil];
     
 }
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+    NSString *type = [info objectForKey:UIImagePickerControllerMediaType];
+    if ([type isEqualToString:@"public.image"]) {
+        UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+        Message *msg = [[Message alloc] init];
+        msg.type = MsgPicture;
+        msg.time = [NSDate date];
+        msg.picture = image;
+        [[NetworkTool sharedNetTool] sendMessage:msg toFriend:self.currentFriend.userName];
+        [picker dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+
 
 @end
